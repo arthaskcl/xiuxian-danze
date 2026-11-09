@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凡人修仙 · 挂机手札</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --panel:#fffdf8; --ink:#3a3630; --ink2:#6f6a60;
+    --line:#e2ddd2; --gold:#a8752c; --gold2:#c9a05a; --btn:#eef3ee;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Songti SC","SimSun",serif;
+    background:var(--bg); color:var(--ink);
+    min-height:100vh; padding:20px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+  h1{font-size:22px;letter-spacing:4px;cursor:pointer;user-select:none}
+  .mood{font-size:12px;color:var(--ink2)}
+  .status{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .stat{background:var(--panel);border:1px solid var(--line);padding:10px 14px;border-radius:4px}
+  .stat .k{font-size:12px;color:var(--ink2)}
+  .stat .v{font-size:20px;font-weight:bold;margin-top:2px}
+  .stat .v.realm{color:var(--gold)}
+  .big{
+    width:100%;padding:26px 0;font-size:18px;letter-spacing:6px;
+    background:var(--btn);border:1px solid #b9c4b9;border-radius:6px;
+    cursor:pointer;color:var(--ink);transition:transform .05s, box-shadow .2s;
+    font-family:inherit;
+  }
+  .big:active{transform:scale(0.985)}
+  .big:hover{box-shadow:0 0 0 2px var(--gold2) inset}
+  .hint{text-align:center;font-size:12px;color:var(--ink2);margin:8px 0 18px}
+  h2{font-size:15px;letter-spacing:3px;margin:16px 0 8px;border-left:3px solid var(--gold);padding-left:8px}
+  .rows{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;
+  }
+  .row:last-child{border-bottom:none}
+  .row:hover{background:#f7f3e8}
+  .row.locked{opacity:.45;cursor:not-allowed}
+  .row .l .nm{font-size:15px}
+  .row .l .ds{font-size:12px;color:var(--ink2);margin-top:2px}
+  .row .r{text-align:right}
+  .row .cost{font-size:13px;color:var(--gold)}
+  .row.cant .cost{color:#b3543f}
+  .row .own{font-size:11px;color:var(--ink2);margin-top:2px}
+  #breakBtn{
+    width:100%;margin-top:16px;padding:14px 0;font-size:15px;letter-spacing:3px;
+    background:#f7efe0;border:1px solid var(--gold2);border-radius:6px;cursor:pointer;color:var(--gold);font-family:inherit;
+  }
+  #breakBtn:disabled{opacity:.45;cursor:not-allowed}
+  .foot{text-align:center;font-size:11px;color:var(--ink2);margin-top:22px}
+  #toast{
+    position:fixed;top:16%;left:50%;transform:translate(-50%,-50%) scale(.9);
+    background:rgba(58,54,48,.92);color:#f4ecd8;padding:14px 30px;border-radius:6px;
+    font-size:16px;letter-spacing:3px;opacity:0;pointer-events:none;transition:opacity .4s, transform .4s;z-index:100;
+  }
+  #toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .float{position:fixed;pointer-events:none;color:var(--gold);font-size:15px;font-weight:bold;animation:fly 1s ease-out forwards;z-index:99}
+  @keyframes fly{to{transform:translateY(-46px);opacity:0}}
+  /* ── 老板模式：伪装成工作笔记 ── */
+  body.moding{--bg:#f7f7f7;--panel:#ffffff;--ink:#333;--ink2:#888;--line:#e5e5e5;--gold:#555;--gold2:#999;--btn:#f0f0f0;font-family:"Microsoft YaHei",sans-serif}
+  body.moding .big{letter-spacing:1px;font-size:14px}
+  .savebar{font-size:11px;color:var(--ink2);text-align:right;margin-top:6px}
+  .savebar a{color:var(--ink2);cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title" title="双击切换低调模式">凡人修仙 · 挂机手札</h1>
+    <span class="mood" id="mood">灵气自生，不假外求</span>
+  </header>
+
+  <div class="status">
+    <div class="stat"><div class="k">灵气</div><div class="v" id="qi">0</div></div>
+    <div class="stat"><div class="k">每秒</div><div class="v" id="rps">0</div></div>
+    <div class="stat"><div class="k">境界</div><div class="v realm" id="realm">炼气期</div></div>
+  </div>
+
+  <button class="big" id="tapBtn">吐 纳</button>
+  <div class="hint">每次点击 +<span id="cpow">1</span> 灵气 · 双击标题可切换「低调模式」</div>
+
+  <h2 id="shopTitle">功 法 · 灵 物（持续获取）</h2>
+  <div class="rows" id="shop"></div>
+
+  <button id="breakBtn">突破</button>
+  <div class="savebar"><span id="savedAt"></span> · <a id="wipe">重开一世</a></div>
+
+  <div class="foot">数据自动存于本机浏览器 · 离线也持续修炼（上限 4 小时）</div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ───────── 数据定义 ─────────
+const REALMS = ["炼气期","筑基期","金丹期","元婴期","化神期","炼虚期","合体期","大乘期","渡劫期","散仙","真仙","金仙","太乙仙人","大罗仙人"];
+const BREAK_BASE = 3000, BREAK_RATIO = 9;
+
+const SHOPS = [
+  {nm:"吐纳诀",  ds:"每次呼吸都携带灵机", base:15,     rate:0.5},
+  {nm:"聚灵阵",  ds:"一方阵盘，聚气成流", base:120,    rate:4},
+  {nm:"灵田",    ds:"自种自收，细水长流", base:800,    rate:18},
+  {nm:"灵兽栏",  ds:"灵兽吐息，反哺主人", base:5200,   rate:92},
+  {nm:"洞府",    ds:"福地洞天，灵气充裕", base:32000,  rate:460},
+  {nm:"灵脉",    ds:"地底灵脉，生生不息", base:190000, rate:2300},
+  {nm:"袖里乾坤",ds:"自成小界，造化在手", base:1.3e6,  rate:13000},
+  {nm:"道法自然",ds:"一花一叶皆是道",     base:9e6,    rate:72000},
+];
+
+const CLICKS = [
+  {nm:"凝神篇", add:2,    cost:120},
+  {nm:"御气篇", add:8,    cost:1600},
+  {nm:"周天篇", add:40,   cost:2.2e4},
+  {nm:"胎息篇", add:220,  cost:3.5e5},
+  {nm:"坐忘篇", add:1300, cost:6e6},
+  {nm:"朝彻篇", add:9000, cost:1.2e8},
+];
+
+const MOODS = ["灵气自生，不假外求","今日不宜渡劫，宜挂机","道在朝夕，积少成多","心静则灵台清明","顺其自然，功到自成"];
+const DISGUISE_TITLE = "季度工作笔记_草稿_v3.txt";
+
+// ───────── 状态 ─────────
+let S = { qi:0, total:0, owned:SHOPS.map(()=>0), clicks:CLICKS.map(()=>0), realm:0, last:Date.now() };
+
+// ───────── 计算 ─────────
+const realmMul = () => Math.pow(2, S.realm);
+const shopCost = i => Math.floor(SHOPS[i].base * Math.pow(1.15, S.owned[i]));
+const rps = () => SHOPS.reduce((s,b,i)=> s + b.rate*S.owned[i], 0) * realmMul();
+const clickPow = () => (1 + CLICKS.reduce((s,c,i)=> s + c.add*S.clicks[i], 0)) * realmMul();
+const breakCost = () => Math.floor(BREAK_BASE * Math.pow(BREAK_RATIO, S.realm));
+const fmt = n => {
+  if (n < 1e4) return Math.floor(n).toString();
+  const u = ["万","亿","兆","京","垓","秭"]; let i=-1;
+  while (n >= 1e4 && i < u.length-1){ n/=1e4; i++; }
+  return n.toFixed(n<100?2:1)+u[i];
+};
+
+// ───────── 渲染 ─────────
+const $ = id => document.getElementById(id);
+let dirty = true;
+
+function render(){
+  $("qi").textContent = fmt(S.qi);
+  $("rps").textContent = fmt(rps());
+  $("realm").textContent = REALMS[S.realm] + (S.realm>=REALMS.length-1?" · 大道圆满":"");
+  $("cpow").textContent = fmt(clickPow());
+
+  if (dirty){
+    dirty = false;
+    const shop = $("shop"); shop.innerHTML = "";
+    SHOPS.forEach((b,i)=>{
+      const c = shopCost(i), ok = S.qi >= c;
+      const div = document.createElement("div");
+      div.className = "row" + (ok?"":" locked cant");
+      div.innerHTML = `<div class="l"><div class="nm">${b.nm} ×${S.owned[i]}</div><div class="ds">+${fmt(b.rate*realmMul())}/秒</div></div>
+                       <div class="r"><div class="cost">${fmt(c)} 灵气</div><div class="own">${S.owned[i]?"已有 "+S.owned[i]:"未习得"}</div></div>`;
+      if (ok) div.onclick = ()=>{ S.qi -= c; S.owned[i]++; toast(`习得 ${b.nm}，每秒 +${fmt(b.rate*realmMul())}`); dirty=true; render(); save(); };
+      shop.appendChild(div);
+    });
+    CLICKS.forEach((c,i)=>{
+      if (S.clicks[i] > 0 || (i>0 && S.clicks[i-1]===0)) return;
+      const ok = S.qi >= c.cost;
+      const div = document.createElement("div");
+      div.className = "row" + (ok?"":" locked cant");
+      div.innerHTML = `<div class="l"><div class="nm">${c.nm}（点击强化）</div><div class="ds">每次吐纳额外 +${fmt(c.add*realmMul())}</div></div>
+                       <div class="r"><div class="cost">${fmt(c.cost)} 灵气</div><div class="own">${S.clicks[i]?"已修":"可修"}</div></div>`;
+      if (ok) div.onclick = ()=>{ S.qi -= c.cost; S.clicks[i]++; toast(`修成 ${c.nm}，吐纳增强`); dirty=true; render(); save(); };
+      shop.appendChild(div);
+    });
+  } else {
+    // 只更新可买状态
+    document.querySelectorAll("#shop .row").forEach((div,idx)=>{
+      // 顺序与生成一致
+    });
+  }
+
+  const btn = $("breakBtn");
+  if (S.realm >= REALMS.length-1){
+    btn.textContent = "已臻大道 · 尽头之上仍是修行";
+    btn.disabled = true; btn.onclick = null;
+  } else {
+    const c = breakCost();
+    btn.textContent = `突破 → ${REALMS[S.realm+1]}（需 ${fmt(c)} 灵气，收益翻倍）`;
+    btn.disabled = S.qi < c;
+    btn.onclick = ()=>{
+      if (S.qi < c) return;
+      S.qi -= c; S.realm++;
+      toast(`突破！晋升 ${REALMS[S.realm]}，灵气产出翻倍`);
+      $("mood").textContent = MOODS[Math.floor(Math.random()*MOODS.length)];
+      dirty=true; render(); save();
+    };
+  }
+}
+
+function tap(e){
+  const gain = clickPow();
+  S.qi += gain; S.total += gain;
+  const f = document.createElement("div");
+  f.className="float"; f.textContent = "+"+fmt(gain);
+  f.style.left = ((e&&e.clientX)||window.innerWidth/2)+"px";
+  f.style.top  = ((e&&e.clientY)||300)+"px";
+  document.body.appendChild(f); setTimeout(()=>f.remove(), 1000);
+  render();
+}
+
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+// ───────── 存档 ─────────
+function save(){ S.last = Date.now(); localStorage.setItem("xx_idle_save", JSON.stringify(S)); $("savedAt").textContent = "已保存 "+new Date().toLocaleTimeString("zh-CN"); }
+function load(){
+  try{
+    const raw = localStorage.getItem("xx_idle_save"); if (!raw) return;
+    const d = JSON.parse(raw);
+    S = Object.assign(S, d);
+    S.owned = SHOPS.map((_,i)=> (d.owned&&d.owned[i])||0);
+    S.clicks = CLICKS.map((_,i)=> (d.clicks&&d.clicks[i])||0);
+    const off = Math.min((Date.now()-S.last)/1000, 4*3600);
+    if (off > 60){
+      const gain = rps()*off*0.5;
+      if (gain > 0){
+        S.qi += gain; S.total += gain;
+        setTimeout(()=>toast(`闭关 ${off<3600?Math.round(off/60)+" 分钟":(off/3600).toFixed(1)+" 小时"}，获取灵气 ${fmt(gain)}`), 400);
+      }
+    }
+  }catch(e){ console.warn(e); }
+}
+$("wipe").onclick = ()=>{
+  if (confirm("重开一世将清空全部进度，确定？")){ localStorage.removeItem("xx_idle_save"); location.reload(); }
+};
+
+// ───────── 低调模式 ─────────
+let modeSnapshot = null;
+function toggleMode(){
+  document.body.classList.toggle("moding");
+  const on = document.body.classList.contains("moding");
+  if (on){
+    if (!modeSnapshot) modeSnapshot = {t:$("title").textContent, m:$("mood").textContent, b:$("tapBtn").textContent, h:$("shopTitle").textContent};
+    $("title").textContent = DISGUISE_TITLE;
+    $("mood").textContent = "最后编辑于 "+new Date().toLocaleDateString("zh-CN");
+    $("tapBtn").textContent = "继续阅读";
+    $("shopTitle").textContent = "阅 读 清 单";
+    $("breakBtn").style.display = "none";
+    document.title = DISGUISE_TITLE;
+  } else {
+    $("title").textContent = modeSnapshot.t;
+    $("mood").textContent = modeSnapshot.m;
+    $("tapBtn").textContent = "吐 纳";
+    $("shopTitle").textContent = modeSnapshot.h;
+    $("breakBtn").style.display = "";
+    document.title = modeSnapshot.t;
+  }
+}
+$("title").addEventListener("dblclick", toggleMode);
+
+// ───────── 主循环 ─────────
+$("tapBtn").onclick = tap;
+setInterval(()=>{
+  const g = rps(); S.qi += g; S.total += g;
+  dirty = true;
+  render();
+}, 1000);
+setInterval(save, 10000);
+window.addEventListener("beforeunload", save);
+
+load();
+render();
+$("savedAt").textContent = "进度已载入";
+</script>
+</body>
+</html>
