@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凡人修仙 · 挂机手札</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --panel:#fffdf8; --ink:#3a3630; --ink2:#6f6a60;
+    --line:#e2ddd2; --gold:#a8752c; --gold2:#c9a05a; --btn:#eef3ee;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Songti SC","SimSun",serif;
+    background:var(--bg); color:var(--ink);
+    min-height:100vh; padding:20px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px}
+  h1{font-size:22px;letter-spacing:4px;cursor:pointer;user-select:none}
+  .mood{font-size:12px;color:var(--ink2)}
+  .status{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:6px;margin-bottom:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);padding:7px 10px;border-radius:4px}
+  .stat .k{font-size:11px;color:var(--ink2)}
+  .stat .v{font-size:16px;font-weight:bold;margin-top:2px}
+  .stat .sub{font-size:10px;color:var(--ink2)}
+  .stat.cur .v{color:#3f7f5f}
+  .stat.cry .v{color:#7b6fb0}
+  .stat.ess .v{color:#a8752c}
+  .tabbar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .tabbar button{flex:1;padding:9px 0;font-size:13px;letter-spacing:2px;background:var(--panel);border:1px solid var(--line);border-radius:4px;cursor:pointer;color:var(--ink2);font-family:inherit;min-width:76px}
+  .tabbar button.on{background:var(--btn);border-color:var(--gold2);color:var(--gold);font-weight:bold}
+  .sec{display:none}
+  .sec.on{display:block}
+  h2{font-size:15px;letter-spacing:3px;margin:16px 0 8px;color:var(--ink)}
+  .big{width:100%;padding:16px 0;font-size:18px;letter-spacing:8px;background:linear-gradient(180deg,#fdfbf5,#f1ead8);
+    border:1px solid var(--gold2);border-radius:6px;color:var(--gold);cursor:pointer;font-family:inherit;margin:6px 0 4px}
+  .big:active{transform:scale(.985)}
+  .hint{font-size:12px;color:var(--ink2);text-align:center;margin-bottom:10px}
+  #breakBtn{width:100%;padding:12px 0;font-size:15px;letter-spacing:2px;background:var(--btn);border:1px solid var(--gold2);
+    border-radius:6px;color:var(--gold);cursor:pointer;font-family:inherit;font-weight:bold;margin:6px 0 12px}
+  #breakBtn:disabled{opacity:.45;cursor:not-allowed}
+  .mulbar{display:flex;gap:6px;align-items:center;margin:0 0 8px;flex-wrap:wrap}
+  .mulbar span{font-size:12px;color:var(--ink2);margin-right:4px}
+  .mulbar button{padding:4px 12px;font-size:12px;border:1px solid var(--line);background:var(--panel);
+    border-radius:4px;cursor:pointer;color:var(--ink2);font-family:inherit}
+  .mulbar button.on{border-color:var(--gold2);color:var(--gold);font-weight:bold}
+  .rows{display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);
+    padding:10px 14px;border-radius:4px;align-items:center;flex-wrap:wrap}
+  .row .nm{font-size:14px;font-weight:bold}
+  .row .ds{font-size:11px;color:var(--ink2);margin-top:3px;line-height:1.6}
+  .row .right{text-align:right;flex-shrink:0}
+  .row .cost{font-size:13px;color:var(--gold)}
+  .row.cant .cost{color:#b3543f}
+  .row .own{font-size:11px;color:var(--ink2);margin-top:2px}
+  .row.click{cursor:pointer}
+  .row.click:hover{border-color:var(--gold2)}
+  .row.locked{opacity:.55}
+  .plotgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .plot{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px;min-height:88px;text-align:center;cursor:pointer}
+  .plot .st{font-size:13px;margin-top:6px;color:var(--ink2)}
+  .plot.ready{border-color:var(--gold2);box-shadow:0 0 0 1px var(--gold2) inset}
+  .mini{padding:4px 12px;font-size:12px;border:1px solid var(--gold2);background:#f7efe0;color:var(--gold);
+    border-radius:4px;cursor:pointer;font-family:inherit;margin:2px}
+  .mini:disabled{opacity:.4;cursor:not-allowed}
+  .mini.gray{border-color:var(--line);background:var(--panel);color:var(--ink2)}
+  .log{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:12px;
+    color:var(--ink2);line-height:1.9;max-height:260px;overflow-y:auto}
+  .tag{display:inline-block;font-size:11px;padding:1px 6px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);margin-left:6px}
+  .good{color:var(--gold)} .bad{color:#b3543f}
+  .zonecard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin-bottom:12px}
+  .zonecard h3{font-size:15px;letter-spacing:2px}
+  .zonecard .zds{font-size:11px;color:var(--ink2);margin-top:2px}
+  .pbar{height:8px;background:#eeeae0;border-radius:4px;overflow:hidden;margin:10px 0 6px;border:1px solid var(--line)}
+  .pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+  .enemy{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#f8f5ee;border:1px dashed var(--line);
+    border-radius:4px;padding:8px 12px;margin-top:8px;font-size:12px}
+  .enemy b{font-size:13px}
+  .es{color:var(--ink2)}
+  .es b{color:var(--ink);font-weight:normal}
+  .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:#fffdf8;
+    padding:8px 20px;border-radius:4px;font-size:13px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none;max-width:86vw}
+  .toast.show{opacity:.94}
+  .foot{margin-top:26px;font-size:11px;color:var(--ink2);text-align:center}
+  .beastrow{border-left:3px solid var(--line);padding-left:10px}
+  .right{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;align-items:center;max-width:100%}
+  .beastrow .right{max-width:100%}
+  .beastrow button.mini{padding:3px 8px;font-size:12px}
+  /* ── 低调模式 ── */
+  body.moding{--bg:#f7f7f7;--panel:#ffffff;--ink:#333;--ink2:#888;--line:#e5e5e5;--gold:#555;--gold2:#999;--btn:#f0f0f0;font-family:"Microsoft YaHei",sans-serif}
+  body.moding .big{letter-spacing:1px;font-size:14px}
+  body.moding .status, body.moding .big, body.moding .hint,
+  body.moding #breakBtn, body.moding #shopTitle, body.moding #shop,
+  body.moding .tabbar, body.moding .sec, body.moding .savebar, body.moding .foot{display:none}
+  body.moding{background:#e9e9e9}
+  body.moding header{border-bottom:1px solid #ccc;padding-bottom:6px;margin-bottom:8px}
+  body.moding h1{font-size:15px;letter-spacing:0;font-family:inherit;font-weight:normal;color:#333}
+  body.moding .mood{font-size:11px}
+  #docMeta{display:none;font-size:11px;color:#999;margin-bottom:10px}
+  body.moding #docMeta{display:block}
+  #fakeNote{display:none;width:100%;min-height:62vh;margin-top:14px;padding:14px;
+    border:1px solid var(--line);border-radius:4px;background:var(--panel);
+    font-family:"Microsoft YaHei",sans-serif;font-size:14px;line-height:1.9;color:var(--ink);resize:vertical}
+  body.moding #fakeNote{display:block;min-height:72vh;background:#fff;border:1px solid #ddd;
+    border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:32px 40px;font-size:13.5px;line-height:2.0}
+  #saveNoteBtn{display:none}
+  body.moding #saveNoteBtn{display:block;width:100%;margin-top:12px;padding:8px 0;font-size:13px;
+    background:#f5f5f5;border:1px solid #ccc;border-radius:2px;color:#444;cursor:pointer;font-family:inherit}
+  body.moding #saveNoteBtn:hover{background:#ececec}
+  #gmRow{display:none;margin-top:10px;gap:8px}
+  body.moding #gmRow.gmOn{display:flex}
+  #gmInput{flex:1;padding:8px 10px;border:1px solid #ccc;border-radius:2px;font-family:inherit;font-size:13px;background:#fff;color:#333}
+  #gmBtn{padding:8px 14px;font-size:13px;background:#f0f0f0;border:1px solid #ccc;border-radius:2px;color:#444;cursor:pointer;font-family:inherit}
+  #gmBtn:hover{background:#e6e6e6}
+  .savebar{font-size:11px;color:var(--ink2);text-align:right;margin-top:6px}
+  .savebar a{color:var(--ink2);cursor:pointer;text-decoration:underline}
+  .jump{color:var(--gold);text-decoration:underline;cursor:pointer}
+  .mulbar.bottle{flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px}
+  .talmask{display:none;position:fixed;inset:0;background:rgba(40,36,30,.55);z-index:200;align-items:center;justify-content:center;padding:16px}
+  .talmask.open{display:flex}
+  .talbox{background:var(--panel);border:2px solid var(--gold2);border-radius:10px;max-width:640px;width:100%;max-height:90vh;overflow-y:auto;padding:20px}
+  .talhead{font-size:18px;letter-spacing:4px;font-weight:bold;margin-bottom:6px}
+  .talhint{font-size:12px;color:var(--ink2);margin-bottom:14px}
+  .talgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+  .talcard{border:2px solid var(--line);border-radius:8px;padding:10px;background:#fffef9;cursor:pointer;user-select:none}
+  .talcard.sel{background:#f7efe0;box-shadow:0 0 0 2px var(--gold2) inset}
+  .talcard .tt{font-size:14px;font-weight:bold;margin-bottom:4px}
+  .talcard .td{font-size:11px;color:var(--ink2);line-height:1.6}
+  .talbtns{display:flex;gap:10px;justify-content:center}
+  .talbtns .mini{font-size:14px;padding:8px 18px}
+  .talok{background:var(--gold);color:#fff;border-color:var(--gold)}
+  .talok:disabled{opacity:.4;cursor:not-allowed}
+  .talchip{display:inline-block;font-size:12px;border:1.5px solid var(--gold2);border-radius:12px;padding:2px 10px;margin-right:6px}
+  #mapSvg text{font-family:"Songti SC","SimSun",serif}
+  #mapSvg .mapnode:hover{filter:brightness(1.05)}
+  .logline{font-size:12px;color:var(--ink2);border-bottom:1px dashed var(--line);padding:4px 2px;line-height:1.7}
+  #tribLog{margin:8px 0}
+  #tribLog:empty{display:none}
+  .bbar{height:8px;background:var(--line);border-radius:4px;margin:6px 0;overflow:hidden}
+  .bbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));width:0%}
+  .zonecard{transition:box-shadow .3s}
+  .zonecard:active{box-shadow:0 0 0 2px var(--gold2) inset}
+  .log .liveflow{font-size:11.5px;color:var(--ink2);line-height:1.8}
+  .log .liveflow div{border-bottom:1px dotted var(--line);padding:2px 6px}
+  .log .liveflow b.good{color:#3a7a44}
+  .log .liveflow b.bad{color:#a8433a}
+  .log.mlog{margin-bottom:10px}
+  .log.mlog .mlog-t{font-weight:bold;color:var(--gold2);font-size:13px;padding:6px 8px;border-bottom:1px solid var(--line)}
+  .log.mlog .mlog-row{display:flex;justify-content:space-between;gap:10px;padding:5px 8px;border-bottom:1px dotted var(--line);font-size:12.5px;color:var(--ink2)}
+  .log.mlog .mlog-row:last-child{border-bottom:none}
+  .log.mlog .mlog-t2{opacity:.6;flex-shrink:0}
+  .log .live{background:linear-gradient(90deg,rgba(192,74,58,.18),transparent);border-left:3px solid #c04a3a;padding:5px 8px;margin:3px 0;color:#8a3226;font-weight:bold;font-size:12.5px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title" title="双击切换低调模式">凡人修仙 · 挂机手札</h1>
+    <span class="mood" id="mood">灵气自生，不假外求</span>
+  </header>
+
+  <div id="docMeta"></div>
+  <textarea id="fakeNote" spellcheck="false" placeholder="记录工作要点……"></textarea>
+  <button id="saveNoteBtn">保 存</button>
+
+  <div class="status" id="statusBar"></div>
+  <div class="tabbar" id="tabbar"></div>
+
+  <div class="sec on" id="sec-cult">
+    <button class="big" id="tapBtn">吐 纳</button>
+    <div class="hint">每次点击 +<span id="cpow">1</span> 灵气 · 双击标题可切换「低调模式」</div>
+    <div id="talView"></div>
+    <div id="signBox"></div>
+    <div id="lifeBox"></div>
+    <div id="pathBox"></div>
+    <h2>功 法 修 炼（每境界四品 · 主修得修为）</h2>
+    <div class="rows" id="gfBox"></div>
+    <button id="breakBtn">突破</button>
+    <div id="tribLog" class="log"></div>
+    <h2>仙 缘 神 通</h2>
+    <div class="rows" id="xyShop"></div>
+    <h2 id="shopTitle">功 法 · 灵 物（持续获取）</h2>
+    <div class="mulbar"><span>一次购买</span><button data-mul="1">×1</button><button data-mul="10">×10</button><button data-mul="25">×25</button><button data-mul="max">MAX</button></div>
+    <div class="rows" id="shop"></div>
+  </div>
+
+  <div class="sec" id="sec-market">
+    <div id="marketHead"></div>
+    <h2>特 产 铺</h2>
+    <div class="rows" id="specShop"></div>
+    <h2>兑 换 铺</h2>
+    <div class="rows" id="exchange"></div>
+    <h2>种 子 铺</h2>
+    <div class="rows" id="seedShop"></div>
+    <h2>幼 崽 铺</h2>
+    <div class="rows" id="cubShop"></div>
+    <h2>出 售（得灵石）</h2>
+    <div class="rows" id="sellShop"></div>
+  </div>
+
+  <div class="sec" id="sec-map">
+    <h2>修 仙 界 舆 图</h2>
+    <div class="hint">点击城池迁居（坊市行情随城而变）· 点击秘境前往闯关</div>
+    <svg id="mapSvg" viewBox="0 0 700 430" style="width:100%;max-width:700px;display:block;margin:0 auto"></svg>
+  </div>
+
+  <div class="sec" id="sec-auction">
+    <h2>拍 卖 行</h2>
+    <div class="hint" id="auctHint"></div>
+    <div class="rows" id="auctList"></div>
+    <h2>寄 售</h2>
+    <div class="rows" id="consignBox"></div>
+  </div>
+
+  <div class="sec" id="sec-realm">
+    <h2>秘 境 · 逐 敌 而 上</h2>
+    <div id="zoneHead"></div>
+    <div id="zones"></div>
+  </div>
+
+  <div class="sec" id="sec-field">
+    <h2>灵 田</h2>
+    <div id="bottleBox"></div>
+    <div id="fieldHead"></div>
+    <div class="plotgrid" id="plots"></div>
+  </div>
+
+  <div class="sec" id="sec-pen">
+    <h2>兽 栏</h2>
+    <div id="penHead"></div>
+    <div class="rows" id="beasts"></div>
+  </div>
+
+  <div class="sec" id="sec-alc">
+    <h2>炼 丹</h2>
+    <div id="alcHead"></div>
+    <div class="rows" id="pills"></div>
+  </div>
+
+  <div class="sec" id="sec-smi">
+    <h2>炼 器</h2>
+    <div id="smiHead"></div>
+    <div class="rows" id="forge"></div>
+  </div>
+
+  <div class="sec" id="sec-bag">
+    <h2>乾 坤 袋</h2>
+    <div class="hint">历练所得、灵田所产、拍卖所购，尽收于此</div>
+    <div class="rows" id="bagList"></div>
+  </div>
+
+  <div class="sec" id="sec-dece">
+    <h2>道 册 · 平生功业</h2>
+    <div id="deceHead"></div>
+    <div class="rows" id="achvList"></div>
+    <h2>仙 缘 神 通</h2>
+    <div class="hint">飞升携仙缘转世，神通轮回不灭。大罗圆满后可引动飞升。</div>
+    <div class="rows" id="xyShop"></div>
+  </div>
+
+  <div class="savebar" id="savebar">进阶之路 · 自动保存 <a id="savedAt">…</a> · <a id="wipeBtn">重修</a></div>
+  <div id="gmRow">
+    <input id="gmInput" placeholder="输入物品名添加到当前存档（可 ×N），如：轮回果×5 / 混沌青莲 / 妖兽皮" style="flex:1">
+    <button id="gmBtn">添加物品</button>
+  </div>
+  <div class="foot">道法自然 · 积少成多</div>
+</div>
+<div class="talmask" id="talentModal">
+  <div class="talbox">
+    <div class="talhead">灵 台 问 道 · 十签择三</div>
+    <div class="talhint">六阶由高到低：红 · 金 · 紫 · 蓝 · 白 · 灰。选出三门天赋，伴你一生修行。</div>
+    <div class="talgrid" id="talCards"></div>
+    <div class="talbtns">
+      <button class="mini" id="talRefresh">重修天赋</button>
+      <button class="mini" id="talFruit">轮回果重修（持有 0）</button>
+      <button class="mini talok" id="talConfirm" disabled>定 下 天 命（择三）</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+
+"use strict";
+const $ = id => document.getElementById(id);
+const ri = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+// ═════════ 基础数据 ═════════
+const REALMS = ["炼气期","筑基期","金丹期","元婴期","化神期","炼虚期","合体期","大乘期","渡劫期","散仙","真仙","金仙","太乙仙人","大罗仙人","道祖"];
+const SHORT  = ["炼气","筑基","金丹","元婴","化神","炼虚","合体","大乘","渡劫","散仙","真仙","金仙","太乙","大罗","道祖"];
+const STAGES = ["前期","中期","后期","圆满"];
+const STAGE_MUL = [1, 1.2, 1.44, 1.72];
+const RB = r => ({atk:10*Math.pow(2,r), def:6*Math.pow(2,r), spd:5+3*r, hp:100*Math.pow(2.1,r)});
+
+const SHOPS = [
+  {nm:"吐纳诀", ds:"吐故纳新，气自丹田", base:15, rate:0.5},
+  {nm:"引气诀", ds:"引天地灵机，汇入经脉", base:31, rate:1.0},
+  {nm:"聚灵阵", ds:"阵盘聚气，涓滴成河", base:63, rate:1.9},
+  {nm:"灵田", ds:"自种灵谷，细水长流", base:129, rate:3.7},
+  {nm:"御兽圈", ds:"灵兽吐息，反哺主人", base:265, rate:7.3},
+  {nm:"悟道室", ds:"闭门静室，参悟至理", base:543, rate:14.2},
+  {nm:"洞天福地", ds:"福地洞天，灵气充裕", base:1113, rate:27.9},
+  {nm:"藏经阁", ds:"万卷道藏，字字珠玑", base:2282, rate:54.6},
+  {nm:"地脉灵眼", ds:"地底灵脉，生生不息", base:4679, rate:107},
+  {nm:"聚灵大阵", ds:"八方灵枢，汇流成海", base:9591, rate:209},
+  {nm:"五行阵盘", ds:"五行相生，循环不息", base:19662, rate:409},
+  {nm:"炼丹房", ds:"丹成气足，药香满谷", base:40307, rate:802},
+  {nm:"护山大阵", ds:"一山一界，固若金汤", base:82630, rate:1569},
+  {nm:"袖里乾坤", ds:"自成小界，造化在手", base:1.69e+05, rate:3072},
+  {nm:"须弥芥子", ds:"芥子纳须弥，包罗万象", base:3.47e+05, rate:6015},
+  {nm:"道法自然", ds:"一花一叶，皆是大道", base:7.12e+05, rate:1.18e+04},
+  {nm:"周天星辰盘", ds:"周天星斗，昼夜运转", base:1.46e+06, rate:2.31e+04},
+  {nm:"万灵塔", ds:"万灵朝拜，香火凝灵", base:2.99e+06, rate:4.51e+04},
+  {nm:"小须弥界", ds:"掌中佛国，袖里山河", base:6.13e+06, rate:8.84e+04},
+  {nm:"诸天阵图", ds:"诸天万象，尽入图中", base:1.26e+07, rate:1.73e+05},
+  {nm:"九霄灵台", ds:"九霄之上，接引罡气", base:2.58e+07, rate:3.39e+05},
+  {nm:"混元鼎", ds:"混元一气，鼎镇乾坤", base:5.28e+07, rate:6.63e+05},
+  {nm:"太虚幻境", ds:"幻境炼心，心即是真", base:1.08e+08, rate:1.3e+06},
+  {nm:"造化玉牒", ds:"造化玄机，一牒尽览", base:2.22e+08, rate:2.54e+06},
+  {nm:"鸿蒙紫气炉", ds:"炉纳鸿蒙，紫气东来", base:4.55e+08, rate:4.97e+06},
+  {nm:"山河社稷图", ds:"图中山河，自成社稷", base:9.33e+08, rate:9.74e+06},
+  {nm:"紫霄宫阙", ds:"紫霄之上，仙宫林立", base:1.91e+09, rate:1.91e+07},
+  {nm:"鸿蒙紫府", ds:"万道之源，一府收纳", base:3.92e+09, rate:3.73e+07},
+];
+const CLICKS = [
+  {nm:"凝神篇", grade:"黄阶下品", add:2,    cost:120,   gatk:4,   gdef:2,  gspd:1,  ghp:20},
+  {nm:"御气篇", grade:"黄阶上品", add:8,    cost:1600,  gatk:12,  gdef:6,  gspd:2,  ghp:80},
+  {nm:"周天篇", grade:"玄阶下品", add:40,   cost:2.2e4, gatk:30,  gdef:16, gspd:3,  ghp:300},
+  {nm:"胎息篇", grade:"玄阶上品", add:220,  cost:3.5e5, gatk:80,  gdef:40, gspd:4,  ghp:1200},
+  {nm:"坐忘篇", grade:"地阶下品", add:1300, cost:6e6,   gatk:220, gdef:110,gspd:6,  ghp:5000},
+  {nm:"朝彻篇", grade:"地阶上品", add:9000, cost:1.2e8, gatk:600, gdef:300,gspd:9,  ghp:20000},
+  {nm:"大罗仙诀", grade:"天阶极品", add:6e4, cost:2.4e9, gatk:1600,gdef:800,gspd:12, ghp:6e4},
+];
+
+// ── 灵草（每境界3种）──
+const HERB_NAMES = [
+ ["青灵草","凝露花","聚气果"],["紫竹笋","灵乳藤","百炼芝"],["金精参","赤阳花","丹霞果"],
+ ["婴变莲","玄阴苔","九曲参"],["神念芝","化灵菊","悟道果"],["虚空白桦","太一芦","空青苔"],
+ ["阴阳鲤藤","两仪果","合欢芝"],["大衍蓍","乘黄芝","九霄果"],["劫波花","雷心草","不灭果"],
+ ["逍遥竹","云梦泽芝","忘忧果"],["真如菩提","金粟花","太真果"],["金髓玉藤","鎏金果","金莲"],
+ ["太乙青莲","紫霄灵芝","混元果"],["大罗仙桃","紫府琼枝","造化青莲"],
+ ["混沌青莲","太初紫芝","鸿蒙道果"],
+];
+const HERBS = [];
+HERB_NAMES.forEach((arr,r)=>arr.forEach((nm,t)=>HERBS.push({
+  nm, r, t,
+  grow: 90 + 270*t + 40*r,
+  seedCost: Math.floor(100*Math.pow(4,r)*Math.pow(t+1,1.5)),
+  sellStone: Math.max(1, Math.floor((t+1)*Math.pow(3,r)*0.8)),
+  yieldN: (t===2?3:2),
+})));
+const herbOf = nm => HERBS.find(h=>h.nm===nm);
+const cubCost = b => Math.max(1, Math.round(b.cubStone * priceMul() * CITIES[S.city].cub * (1-tval("beast")/100)));
+const breedSec = sp => 180 + 60*(beastOf(sp)?beastOf(sp).r:0);
+const penCap = () => 8*(S.realm+1);   // 每大境界 +8 栏位
+const plotsCap = () => 8*(S.realm+1); // 每大境界 +8 田
+
+// ── 妖兽（每境界3种：攻/速/防）──
+const BEAST_NAMES = [
+ ["青狼","灵狐","岩甲龟"],["火鬃猪","疾风狼","铁背熊"],["雷鹰","金瞳隼","玄龟"],
+ ["赤炎虎","影月豹","玄冰蟒"],["焚天狮","青鸾","山岳犀"],["骨翼魔龙","虚空貂","幽冥鲸"],
+ ["裂天貔貅","九尾天狐","镇岳巨猿"],["紫霄雷龙","追风凰","缚岳狻猊"],["劫火麒麟","混沌鹏","撼地玄牛"],
+ ["撼天狮","醉仙鹤","断岳犀"],["朱雀雏","云霄鹿","真武龟蛇"],["金毛犼","风伯貂","玉麒麟"],
+ ["饕餮","白泽","太乙神牛"],["大罗金鹏","应龙","玄武"],
+];
+const BEASTS = [];
+BEAST_NAMES.forEach((arr,r)=>arr.forEach((nm,role)=>BEASTS.push({
+  sp:nm, r, role, // role 0攻 1速 2防
+  cubStone: Math.floor(60*Math.pow(3.6,r)),
+  grow: 120+150*r,
+  atk: Math.round([8,5,3][role]*Math.pow(2,r)),
+  def: Math.round([2,3,7][role]*Math.pow(2,r)),
+  spd: [2,5,1][role] + Math.floor(r/2),
+  hp:  Math.round([40,50,90][role]*Math.pow(2.1,r)),
+  mats: {妖兽皮:[1,2],妖兽骨:[1,2],妖兽血:[1,2]},
+})));
+const beastOf = sp => BEASTS.find(b=>b.sp===sp);
+
+// ── 丹方（每境界5种：攻/防/速/血/聚气）──
+const PILL_KINDS = [
+ {k:"atk", nm:"力道丹", u:"攻"},{k:"def", nm:"铁骨丹", u:"防"},
+ {k:"spd", nm:"疾风丹", u:"速"},{k:"hp",  nm:"血气丹", u:"血"},{k:"rps", nm:"聚气丹", u:"产"},
+];
+const PILLS = [];
+REALMS.forEach((_,r)=>PILL_KINDS.forEach((pk,ki)=>{
+  if (!HERB_NAMES[r]) return;
+  const h1 = HERB_NAMES[r][0], h2 = HERB_NAMES[r][1], h3 = HERB_NAMES[r][2];
+  const need = pk.k==="rps" ? {[h1]:2,[h2]:2} : pk.k==="hp" ? {[h1]:1,[h3]:1} : {[h1]:1,[h2]:2};
+  PILLS.push({ r, kind:pk.k, nm:(r===0?"":SHORT[r]+"·")+pk.nm, u:pk.u, need,
+    desc: pk.k==="rps" ? "永久 +8% 灵气产出" : `永久 ${pk.u}+` });
+}));
+const PILL_VAL = { atk:{u:4,b:2}, def:{u:3,b:2}, spd:{u:2,b:1}, hp:{u:60,b:2.1} };
+
+// ── 器谱（每境界：武器/护甲/法宝）──
+const WEAPON_NAMES = ["粗铁剑","精钢刀","妖骨刃","灵纹剑","焚天枪","虚空戟","裂天斧","紫雷锤","劫火刀","斩仙剑","真武剑","金霄剑","太乙剑","大罗仙剑"];
+const ARMOR_NAMES  = ["粗布衣","皮甲","妖鳞甲","法袍","焚天袍","虚空甲","裂天铠","紫霄甲","劫火甲","仙羽衣","真武甲","金霄甲","太乙甲","大罗仙铠"];
+const TREAS_NAMES  = ["青木令","聚灵珠","金蛇鞭","元婴塔","化神幡","炼虚镜","合体铃","大乘鼎","渡劫舟","散仙笛","真仙图","金仙塔","太乙灯","大罗盘"];
+const gearStats = (r, slot) => slot==="w" ? {atk:Math.round(6*Math.pow(2,r))}
+  : slot==="a" ? {def:Math.round(6*Math.pow(2,r))}
+  : {atk:Math.round(3*Math.pow(2,r)), def:Math.round(3*Math.pow(2,r)), spd:2, hp:Math.round(30*Math.pow(2.1,r))};
+const gearCost = r => ({mats:[["妖兽皮",3+2*r],["妖兽骨",3+2*r]], stones:Math.max(1,Math.floor(40*Math.pow(3.2,r)*priceMul()*(1-tval("craft")/100)))});
+
+// ── 秘境（每张覆盖2个大境界，100敌）──
+// ── 三界：人界(炼气~化神) 灵界(炼虚~散仙) 仙界(真仙~大罗)，不可下界 ──
+const WORLDS = [
+  {nm:"人界", theme:["#7aa874","#eef2e4","#3a5a40"], rng:0},
+  {nm:"灵界", theme:["#6f7fc0","#e8eaf8","#2e3a6e"], rng:5},
+  {nm:"仙界", theme:["#c9a05a","#faf3dd","#7a5a1e"], rng:10},
+];
+const worldOf = r => Math.min(2, Math.floor(r/5));
+const ZONES = [
+ {world:0, base:0, nm:"青雾林", pool:["幼狼","雾妖","毒蟒","山枭","灵蛛","树精","野猪","青风虎"],
+  bosses:["青毛狼王","雾隐妖姬","碧鳞蟒祖","赤目枭尊","噬灵蛛后","千年树魔","迷雾领主","青风虎王","断牙野猪王","青雾山大王"]},
+ {world:0, base:1, nm:"黑风寨", pool:["山匪","黑风狼","刀疤枭","赤目蝠","铁爪猴","山寨头目","黑风大盗","啸风虎"],
+  bosses:["黑风寨主","刀疤枭王","赤目蝠尊","铁爪猿王","啸风虎王","山匪头子","黑风二当家","赤目魔枭","铁爪猴祖","黑风大寨主"]},
+ {world:0, base:1, nm:"妖兽谷", pool:["妖虎","獠猪妖","山魈","赤焰貂","黑风熊","噬魂蜂","幽冥蝎","铁角犀"],
+  bosses:["妖虎啸天","獠牙魔猪","山魈老祖","赤焰貂王","黑风熊霸","噬魂蜂后","幽冥蝎王","铁角犀尊","金睛猿祖","万妖谷主"]},
+ {world:0, base:2, nm:"上古遗府",pool:["石魔卫","府中残灵","古阵傀儡","镇府石狮","画皮妖","玄棺尸","丹灵","剑侍"],
+  bosses:["石魔大将军","府灵剑侍","守府妖王","古阵傀儡王","镇府双狮","千年画皮","玄棺尸祖","府主残魂","遗府丹圣","上古府尊"]},
+ {world:0, base:2, nm:"万毒谷", pool:["毒蝎","瘴蟒","毒藤妖","蛊虫","腐骨尸","毒蛾","瘴母","万毒之灵"],
+  bosses:["毒蝎王","瘴蟒祖","毒藤妖母","蛊仙","腐骨尸王","毒蛾后","瘴母之灵","万毒谷主","蛊毒老祖","百毒至尊"]},
+ {world:0, base:3, nm:"幽冥洞", pool:["幽魂","冥蝠","白骨兵","尸妖","阴煞","鬼将","摄魂使","幽冥火"],
+  bosses:["幽魂之主","冥蝠王","白骨将军","尸妖祖","阴煞老祖","鬼将尊","摄魂圣使","幽冥火灵","百鬼夜行主","幽冥洞主"]},
+ {world:0, base:3, nm:"落霞涧", pool:["霞灵","赤翎鸟","焰尾狐","岩甲兽","风啸鹰","石灵","霞光鹤","丹火蛾"],
+  bosses:["霞灵之主","赤翎鸟王","焰尾狐仙","岩甲兽尊","风啸鹰王","石灵古帝","霞光鹤祖","丹火蛾后","落霞谷主","万霞天尊"]},
+ {world:0, base:4, nm:"天南古战场",pool:["残魂甲士","古战场幽骑","断戟兵灵","战鼓精魄","血煞","陨修怨灵","古阵军魂","烽火兽"],
+  bosses:["残魂大将","幽骑统领","断戟兵灵王","战鼓精魄尊","血煞魔君","陨修怨灵祖","古阵军魂帅","烽火兽王","天南战魂","古战场大帝"]},
+ {world:1, base:5, nm:"青冥海眼", pool:["海灵","碧波蛟","漩涡蟹","深海鲛","浪里鲲","水母妖","潮音螺","海眼守卫"],
+  bosses:["海灵之主","碧波蛟王","漩涡蟹尊","深海鲛祖","浪里鲲王","水母妖后","潮音螺圣","海眼霸主","沧溟龙君","青冥海帝"]},
+ {world:1, base:5, nm:"紫霄雷池", pool:["雷灵","紫霄鹰","电蜥","雷幕蛛","奔雷兽","霄霆豹","引雷傀","雷池之灵"],
+  bosses:["雷灵之主","紫霄鹰王","电蜥祖","雷幕蛛后","奔雷兽尊","霄霆豹王","引雷傀帅","雷池之灵","九霄雷君","紫霄雷帝"]},
+ {world:1, base:6, nm:"星辰海",  pool:["星鲨","月鲸","坠星兽","银河蛟","潮汐妖","北冥鲲","星辰龟","吞天蚌"],
+  bosses:["星鲨将军","月鲸仙子","坠星兽王","银河蛟尊","潮汐妖后","北冥鲲祖","星辰古龟","吞天蚌母","星海龙王","星辰之主"]},
+ {world:1, base:7, nm:"万妖山脉",pool:["妖狼","山魈王","赤炎狮","铁背龙龟","噬金鼠","风魈","火鬃豕","妖山精灵"],
+  bosses:["妖狼王","山魈之祖","赤炎狮尊","铁背龙龟霸","噬金鼠王","风魈圣","火鬃豕祖","妖山老祖","万妖之王","妖山帝君"]},
+ {world:1, base:7, nm:"沧澜深渊", pool:["渊蛟","黑水玄蛇","冥河鬼卒","深渊魔鲸","噬渊鲲","玄冥鬼将","寒骨妖龙","沉渊魔鱼"],
+  bosses:["渊蛟寒潭","黑水玄蛇祖","冥河老祖","深渊魔鲸王","噬渊鲲影","玄冥鬼将","寒骨妖龙王","镇渊魔尊","九幽渊主","玄冥大帝"]},
+ {world:1, base:8, nm:"幽冥鬼域", pool:["鬼卒","幽冥犬","索魂使","白骨将","冥河舟子","鬼面修","阴风烛","鬼域领主"],
+  bosses:["鬼卒大将","幽冥犬王","索魂使尊","白骨将帅","冥河舟子祖","鬼面修罗","阴风烛灵","鬼域领主","酆都判官","幽冥鬼帝"]},
+ {world:1, base:8, nm:"玄冰极地", pool:["冰灵","玄冰蟒","雪魅","寒潭蛟","冰魄","霜狼","极地冰熊","寒晶守卫"],
+  bosses:["冰灵之主","玄冰蟒祖","雪魅仙子","寒潭蛟尊","冰魄王","霜狼统领","极地冰熊霸","寒晶守卫长","万里冰原主","玄冰大帝"]},
+ {world:1, base:9, nm:"灵庭废墟", pool:["庭卫残灵","灵纹傀儡","庭柱石灵","古灵官","废庭怨灵","灵草精","守庭兽","灵庭司命"],
+  bosses:["庭卫残灵将","灵纹傀儡王","庭柱石灵尊","古灵官尊","废庭怨灵祖","灵草精魄","守庭神兽","灵庭司命尊","废墟之主","灵庭大帝"]},
+ {world:2, base:10, nm:"天外天",  pool:["天外来客","虚空兽","混沌残魂","域外天魔","破界妖","星陨魔","天外邪灵","界外游魂"],
+  bosses:["天外来客","虚空兽祖","混沌残识","域外天魔王","破界妖神","星陨魔尊","天外邪灵主","界外游魂帅","天外之主","虚空大帝"]},
+ {world:2, base:10, nm:"蓬莱仙岛",pool:["岛灵","仙鹤童子","灵芝精","海市蜃楼兽","蓬莱剑修残影","仙风鹤","瑶草灵","岛主守卫"],
+  bosses:["岛灵之主","仙鹤童子尊","灵芝精魄","蜃楼兽王","蓬莱剑仙影","仙风鹤祖","瑶草灵圣","守卫统领","蓬莱岛主","蓬莱仙尊"]},
+ {world:2, base:11, nm:"金阙天关", pool:["金甲卫士","天关守将","阙灵","金鳞卫","天兵残魂","关隘凶兽","金阙仪仗","天关神将"],
+  bosses:["金甲卫士长","天关守将尊","阙灵之主","金鳞卫统领","天兵残魂帅","关隘凶兽王","金阙仪仗使","天关神将","镇关大将","金阙天帝"]},
+ {world:2, base:11, nm:"瑶池圣境", pool:["蟠桃童","瑶池仙蛾","圣境仙鹿","玉池锦鲤","云裳仙子","圣境灵禽","瑶草护卫","蟠桃园灵"],
+  bosses:["蟠桃童祖","瑶池仙蛾后","圣境仙鹿王","玉池锦鲤尊","云裳仙子","圣境灵禽皇","瑶草护卫长","蟠桃园灵圣","瑶池圣母","瑶池金母"]},
+ {world:2, base:12, nm:"兜率丹宫", pool:["丹炉火灵","药童","丹渣傀儡","宫中仙官","药鼎兽","丹烟魅","守宫仙卫","八卦炉灵"],
+  bosses:["丹炉火灵尊","药童之祖","丹渣傀儡王","宫中仙官尊","药鼎兽霸","丹烟魅后","守宫仙卫统领","八卦炉灵圣","兜率丹师","太上老君炉"]},
+ {world:2, base:12, nm:"混沌古域", pool:["混沌兽","古域游魂","虚无行者","古域凶灵","沌风","混元石魔","古域守望者","混沌蛋"],
+  bosses:["混沌兽王","古域游魂祖","虚无行者尊","古域凶灵帅","沌风之主","混元石魔霸","古域守望者长","混沌蛋灵","古域之主","混元大帝"]},
+ {world:2, base:13, nm:"大罗天阙", pool:["阙前仙卫","大罗金仙影","天阙瑞兽","仙班残灵","阙楼剑灵","天门守官","瑞云仙禽","天阙战魂"],
+  bosses:["阙前仙卫长","大罗金仙影尊","天阙瑞兽王","仙班残灵祖","阙楼剑灵圣","天门守官尊","瑞云仙禽皇","天阙战魂帅","大罗天将","大罗天尊"]},
+ {world:2, base:13, nm:"轮回之地", pool:["轮回使","往生灵","因果蛾","宿命影","前世残身","轮回镜灵","彼岸花妖","忘川舟夫"],
+  bosses:["轮回使者","往生灵尊","因果蛾后","宿命影王","前世残身祖","轮回镜灵圣","彼岸花妖皇","忘川舟夫霸","轮回井主","轮回道尊"]},
+];
+function enemyOf(zi, n){
+  const z = ZONES[zi];
+  const L = Math.min(z.base + (n>50?1:0), 13);
+  const q = ((n-1)%50)/50;
+  const boss = n%10===0;
+  const m = (0.6+0.55*q) * (n>50?1.35*Math.pow(1.008, n-50):1), bm = boss?1.6:1;
+  const B = RB(L);
+  return {
+    nm: boss ? ZONES[zi].bosses[n/10-1] : ZONES[zi].pool[(n-1)%ZONES[zi].pool.length],
+    boss, L, n,
+    atk: Math.round(B.atk*m*bm*1.05),
+    def: Math.round(B.def*m*bm),
+    spd: Math.round(B.spd*(0.8+0.4*q)*bm),
+    hp:  Math.round(B.hp*m*bm*(boss?2:1)),
+  };
+}
+
+// ── 货币汇率：1灵石=100灵气 1灵晶=100灵石 1仙元石=100灵晶 ──
+const EX = [
+ {nm:"灵气 → 灵石", rate:"60 灵气 = 1 灵石", max:()=>Math.floor(S.qi/60), do:n=>{S.qi-=60*n;S.stones+=n;}},
+ {nm:"灵石 → 灵气", rate:"1 灵石 = 90 灵气", max:()=>Math.floor(S.stones), do:n=>{S.stones-=n;S.qi+=90*n;}},
+ {nm:"灵石 → 灵晶", rate:"100 灵石 = 1 灵晶", max:()=>Math.floor(S.stones/100), do:n=>{S.stones-=100*n;S.crystals+=n;}},
+ {nm:"灵晶 → 灵石", rate:"1 灵晶 = 80 灵石", max:()=>Math.floor(S.crystals), do:n=>{S.crystals-=n;S.stones+=80*n;}},
+ {nm:"灵晶 → 仙元石", rate:"100 灵晶 = 1 仙元石", max:()=>Math.floor(S.crystals/100), do:n=>{S.crystals-=100*n;S.essence+=n;}},
+ {nm:"仙元石 → 灵晶", rate:"1 仙元石 = 80 灵晶", max:()=>Math.floor(S.essence), do:n=>{S.essence-=n;S.crystals+=80*n;}},
+];
+
+// ── 天赋（十选三，六阶：灰白蓝紫金红）──
+const TIER_NAMES = ["灰","白","蓝","紫","金","红"];
+const TIER_COLORS = ["#8f8a80","#b0aa9c","#5b7fb4","#8b6fb0","#c9a05a","#c04a3a"];
+const TIER_W = [25,33,23,12,5,2];
+const TALENTS = [
+  {id:"linggen", nm:"天灵根", ds:"灵气产出 +X%", vals:[5,10,15,25,40,60]},
+  {id:"body", nm:"铜筋铁骨", ds:"攻防血 +X%", vals:[8,12,18,25,35,50]},
+  {id:"swift", nm:"追风逐电", ds:"速度 +X", vals:[3,5,8,12,16,22]},
+  {id:"gold", nm:"点石成金", ds:"灵石获取 +X%", vals:[20,30,50,70,100,150]},
+  {id:"dan", nm:"丹道通玄", ds:"丹效 +X%，耐药上限 +X", vals:[15,20,30,40,50,70], cap:[3,5,8,10,12,15]},
+  {id:"farm", nm:"灵植妙手", ds:"种植时间 -X%，蓝阶以上采收 +1", vals:[10,15,20,25,35,50]},
+  {id:"beast", nm:"万兽亲缘", ds:"幼崽 -X%，出战加成 +X%", vals:[15,20,30,40,50,60]},
+  {id:"craft", nm:"神工鬼斧", ds:"锻造 -X%，器物属性 +X%", vals:[10,15,20,30,40,60]},
+  {id:"realm", nm:"洞天福地", ds:"秘境灵气 +X%，灵晶 +X%", vals:[30,50,80,120,160,250]},
+  {id:"luck", nm:"福缘深厚", ds:"拍卖行价格 -X%", vals:[5,8,12,18,25,35]},
+];
+function rollTier(){ const x=Math.random()*100; let acc=0; for(let i=0;i<6;i++){ acc+=TIER_W[i]; if(x<acc) return i; } return 0; }
+function rollTalents(){ return TALENTS.map(t=>({id:t.id, tier:rollTier()})); }
+const tal = id => S.talents ? S.talents.find(x=>x.id===id) : null;
+const tval = id => { const t=tal(id); if(!t) return 0; return TALENTS.find(x=>x.id===id).vals[t.tier]; };
+const tcap = () => 25 + (tal("dan") ? TALENTS.find(x=>x.id==="dan").cap[tal("dan").tier] : 0);
+
+// ── 城池（舆图迁居，坊市各异）──
+const CITY_NAMES = [
+  ["青牛镇","落霞坊","临水城","云梦泽市","赤炎城","天南郡城","玄岳城","天南坊市总会"],
+  ["青冥城","紫霄坊","落星城","沧澜港","万妖城","幽冥市","玄冰港","灵庭商城"],
+  ["太虚城","蓬莱仙市","金阙坊","瑶池宝阁","兜率宫市","星辰古市","混沌城","大罗天市"],
+];
+const CITY_UNLOCK = [[0,0,1,2,2,3,4,4],[5,5,6,7,7,8,8,9],[10,10,11,11,12,12,13,13]];
+const CITY_CUB = [[0.95,1.0,0.85,0.9,0.8,1.0,0.75,0.85],[0.9,0.85,1.0,0.75,0.9,0.8,1.0,0.7],[0.8,0.9,0.7,1.0,0.75,0.85,0.7,0.65]];
+const CITIES = [];
+CITY_NAMES.forEach((names,w)=>names.forEach((nm,i)=>{
+  const unlock = CITY_UNLOCK[w][i];
+  const kinds = ["pill","cub","treasure"];
+  const kd = kinds[(w*3+i)%3];
+  const spec = kd==="pill" ? {kind:"pill", r:unlock, k:["atk","def","spd","hp","rps"][(w*3+i)%5], qty:3, stones:Math.max(20,Math.round(40*Math.pow(3.5,unlock)))}
+    : kd==="cub" ? {kind:"cub", r:unlock, role:(w+i)%3, stones:Math.max(30,Math.round(50*Math.pow(3.6,unlock)*0.8))}
+    : {kind:"treasure", r:unlock, crystals:Math.max(4,Math.round(5*Math.pow(2.2,unlock)))};
+  CITIES.push({nm, world:w, unlock, seed:Math.max(0.6,0.95-i*0.04), cub:CITY_CUB[w][i], spec});
+}));
+function travel(i){
+  if (S.realm < CITIES[i].unlock){ toast(`需 ${REALMS[CITIES[i].unlock]} 境界方可入城`); return; }
+  S.city = i; toast(`迁居 ${CITIES[i].nm}，坊市行情已变`);
+  dirty=true; render(); save();
+}
+// ── 成就（永久加成 + 称号）──
+const ACHV = [
+  {id:"r1",  nm:"初入道途",   cond:()=>S.realm>=1,  title:"入道者",  fx:{stats:3},  ds:"突破至筑基期"},
+  {id:"r3",  nm:"金丹大道",   cond:()=>S.realm>=3,  title:"丹成",    fx:{stats:5},  ds:"突破至元婴期"},
+  {id:"r6",  nm:"合体天骄",   cond:()=>S.realm>=6,  title:"天骄",    fx:{rps:8},    ds:"突破至大乘期"},
+  {id:"r9",  nm:"劫后余生",   cond:()=>S.realm>=9,  title:"渡劫者",  fx:{stats:8},  ds:"突破至真仙"},
+  {id:"r13", nm:"大罗之巅",   cond:()=>S.realm>=13, title:"准仙",    fx:{rps:15},   ds:"达到大罗仙人"},
+  {id:"r14", nm:"道祖之尊",   cond:()=>S.realm>=14, title:"超脱",    fx:{rps:30},   ds:"证道成祖，万劫不磨"},
+  {id:"z0",  nm:"青雾行者",   cond:()=>S.zprog[0]>=100, title:"林间客", fx:{rps:5},  ds:"通关青雾林"},
+  {id:"z3",  nm:"遗府归人",   cond:()=>S.zprog[3]>=100, title:"府主",   fx:{stats:6},  ds:"通关玄冥渊"},
+  {id:"z6",  nm:"混沌主宰",   cond:()=>S.zprog[6]>=100, title:"主宰",   fx:{rps:20},   ds:"通关混沌秘境"},
+  {id:"k50", nm:"斩将五十",   cond:()=>S.kills>=50,  fx:{stats:6},   ds:"秘境斩敌 50"},
+  {id:"k200",nm:"千人斩",     cond:()=>S.kills>=200, fx:{stats:12},  ds:"秘境斩敌 200"},
+  {id:"bt6", nm:"万兽之友",   cond:()=>S.beasts.length>=8, fx:{rps:8}, ds:"兽栏八兽齐鸣"},
+  {id:"pl50",nm:"丹道大家",   cond:()=>Object.values(S.pillCount).reduce((a,b)=>a+b,0)>=50, fx:{stats:5}, ds:"服丹 50 颗"},
+  {id:"fw14",nm:"神兵尽出",   cond:()=>{ const w=gear("w"),a=gear("a"),t=gear("t"); return w&&a&&t&&w.r===13&&a.r===13&&t.r===13; }, fx:{stats:15}, ds:"身披大罗全套神兵"},
+  {id:"rich",nm:"富甲一方",   cond:()=>S.stones>=1000000, fx:{rps:10}, ds:"持有百万灵石"},
+  {id:"asc1",nm:"一世轮回",   cond:()=>S.ascend>=1, title:"轮回仙", fx:{rps:20}, ds:"完成一次飞升"},
+];
+const achvFx = k => ACHV.reduce((s,a)=> s + ((S.achv[a.id] && a.fx[k])||0), 0);
+const myTitles = () => ACHV.filter(a=>S.achv[a.id] && a.title).map(a=>a.title);
+
+// ── 派遣探索 ──
+const MDEST = [
+  {nm:"近郊巡查", sec:120, mult:1},
+  {nm:"深山探宝", sec:300, mult:2.2},
+  {nm:"秘境远征", sec:600, mult:4},
+];
+// ── 仙缘商店 ──
+const ASCUP = [
+  {id:"body",  nm:"仙体淬炼", ds:"四维属性 +15%/级", max:5, cost:lv=>3+2*lv},
+  {id:"rps",   nm:"吞灵造化", ds:"灵气产出 +30%/级", max:5, cost:lv=>3+2*lv},
+  {id:"trib",  nm:"天道亲和", ds:"天劫威力 -15%/级", max:3, cost:lv=>5+3*lv},
+  {id:"stone", nm:"仙家馈赠", ds:"飞升初始灵石 +2000/级 · 灵气产出 +10%/级", max:5, cost:lv=>2+lv},
+];
+
+// ── 天劫 ──
+const tribOf = R => { const B = RB(R), w = 1 - 0.15*(S.xyUp.trib||0);
+  const crossed = R===5 || R===10;   // 飞升灵界/仙界的界劫，倍强
+  const cw = crossed ? 1.6 : 1;      // 折寿期渡劫有险（备齐装备丹兽功法），仙体不朽期稳过为爽点
+  return { nm:`${REALMS[R]}·雷劫`, atk:Math.round(B.atk*2.6*cw*w*(1+0.04*R)), def:Math.round(B.def*2.6*cw*w*(1+0.04*R)), spd:B.spd, hp:Math.round(B.hp*2.6*cw*w*(1+0.05*R)) };
+};
+// ── 寿元（借鉴修仙立志传：渡劫失败折寿，坐化转世，延寿丹续命）──
+const LIFE = [80,120,200,350,600,1000,1600,2500,4000,6500,10000,16000,26000,42000,70000];
+const LIFE_PILLS = [
+  {r:2,  nm:"凝寿丹", add:20,   need:{金精参:2,  赤阳花:1},  stones:240},
+  {r:4,  nm:"驻颜丹", add:60,   need:{神念芝:2,  悟道果:1},  stones:1200},
+  {r:6,  nm:"续命丹", add:160,  need:{阴阳鲤藤:2,两仪果:1},  stones:4800},
+  {r:8,  nm:"天寿丹", add:400,  need:{劫波花:2,  不灭果:1},  stones:19200},
+  {r:10, nm:"万寿丹", add:1000, need:{真如菩提:2,太真果:1},  stones:72000},
+  {r:12, nm:"大衍寿丹", add:2600, need:{太乙青莲:2,混元果:1}, stones:240000},
+];
+const MOODS = ["灵气自生，不假外求","今日不宜渡劫，宜挂机","道在朝夕，积少成多","心静则灵台清明","顺其自然，功到自成"];
+const DISGUISE_TITLE = "季度工作笔记_草稿_v3.txt";
+
+// ═════════ 状态 ═════════
+let S = {
+  v:3, qi:0, total:0, owned:SHOPS.map(()=>0), clicks:CLICKS.map(()=>0),
+  realm:0, stage:0, last:Date.now(),
+  mul:1, alv:0, elv:0, partnerSp:null, breed:null,
+  inv:{}, seeds:{}, harvestN:{},
+  plots:[null,null], beasts:[], eq:{w:null,a:null,t:null},
+  pillU:{atk:0,def:0,spd:0,hp:0}, rpsPct:0,
+  stones:0, crystals:0, essence:0,
+  zprog:Array(24).fill(0), auct:null, consign:null,
+  city:0, talents:null, tRolls:0, troll:null, talSel:[],
+  pillCount:{atk:0,def:0,spd:0,hp:0,rps:0},
+  bottle:{charge:3, last:Date.now()}, flow:{until:0, mult:1},
+  kills:0, tribWins:0, tribFails:0, achv:{},
+  missions:[], sign:{d:"", n:0},
+  ascend:0, xy:0, xyUp:{body:0, rps:0, trib:0, stone:0},
+  life:80, secl:{until:0}, path:-1, refine:{}, mLog:[],
+};
+let log = [];
+let selSeed = null;
+const MATS = {妖兽皮:15, 妖兽骨:18, 妖兽血:30}; // 灵石售价
+
+// ═════════ 计算 ═════════
+const realmMul = () => Math.pow(1.9, S.realm);
+const priceMul = () => Math.pow(realmMul(), 0.8);   // 物价动态补偿：消耗品≈20~70秒收入恒定
+const WORLD_PEAK = [4, 9, 13];   // 人界化神 / 灵界散仙 / 仙界大罗
+// ── 功法体系（每境界四品：下/中/上/极）——修为来源 ──
+const GF = [
+  {nm:"长春功", ds:"吐纳草木生气", r:0, q:0},
+  {nm:"聚灵诀", ds:"聚灵入体", r:0, q:1},
+  {nm:"引雷诀", ds:"引雷淬脉", r:0, q:2},
+  {nm:"太清诀", ds:"太清一脉正传", r:0, q:3},
+  {nm:"玄元诀", ds:"玄门筑基正法", r:1, q:0},
+  {nm:"凝元功", ds:"凝气化元", r:1, q:1},
+  {nm:"混元功", ds:"混元一气", r:1, q:2},
+  {nm:"玄天功", ds:"玄天大法残篇", r:1, q:3},
+  {nm:"金丹诀", ds:"结丹之基", r:2, q:0},
+  {nm:"紫阳功", ds:"紫阳真气", r:2, q:1},
+  {nm:"太阳真解", ds:"太阳精火淬丹", r:2, q:2},
+  {nm:"大衍诀", ds:"大衍之数五十", r:2, q:3},
+  {nm:"婴变诀", ds:"温养元婴", r:3, q:0},
+  {nm:"元磁神光", ds:"元磁神光炼形", r:3, q:1},
+  {nm:"紫府仙缘", ds:"紫府藏仙缘", r:3, q:2},
+  {nm:"太虚化形诀", ds:"太虚化形", r:3, q:3},
+  {nm:"化神篇", ds:"炼神返虚之阶", r:4, q:0},
+  {nm:"神念域", ds:"神念成域", r:4, q:1},
+  {nm:"太上忘情篇", ds:"太上忘情", r:4, q:2},
+  {nm:"炼神篇", ds:"神魂如炬", r:4, q:3},
+  {nm:"炼虚诀", ds:"踏虚而行", r:5, q:0},
+  {nm:"虚空挪移", ds:"挪移虚空", r:5, q:1},
+  {nm:"周天星斗功", ds:"周天星斗大阵", r:5, q:2},
+  {nm:"太虚归一功", ds:"万法归一", r:5, q:3},
+  {nm:"合体篇", ds:"神与体合", r:6, q:0},
+  {nm:"阴阳逆转", ds:"阴阳倒转", r:6, q:1},
+  {nm:"天地法相", ds:"法相天地", r:6, q:2},
+  {nm:"大五行元磁功", ds:"五色神光", r:6, q:3},
+  {nm:"大乘诀", ds:"大乘之基", r:7, q:0},
+  {nm:"寂灭经", ds:"寂灭归真", r:7, q:1},
+  {nm:"大梦心经", ds:"大梦千秋", r:7, q:2},
+  {nm:"轮回经", ds:"参悟轮回", r:7, q:3},
+  {nm:"御劫诀", ds:"以劫炼己", r:8, q:0},
+  {nm:"九转重元功", ds:"九转淬元", r:8, q:1},
+  {nm:"雷帝真经", ds:"雷帝遗法", r:8, q:2},
+  {nm:"天雷九变", ds:"九变雷身", r:8, q:3},
+  {nm:"散仙诀", ds:"散仙证道", r:9, q:0},
+  {nm:"北斗真经", ds:"北斗注死", r:9, q:1},
+  {nm:"紫霄雷诀", ds:"紫霄神雷", r:9, q:2},
+  {nm:"九天玄功", ds:"九天玄功正统", r:9, q:3},
+  {nm:"仙罡诀", ds:"仙罡护体", r:10, q:0},
+  {nm:"太乙青灵诀", ds:"青灵化仙", r:10, q:1},
+  {nm:"太清仙箓", ds:"太清仙箓真篇", r:10, q:2},
+  {nm:"三清合一", ds:"三花聚顶", r:10, q:3},
+  {nm:"金身诀", ds:"金身初成", r:11, q:0},
+  {nm:"不灭金身", ds:"身如琉璃", r:11, q:1},
+  {nm:"琉璃净火", ds:"净火焚身", r:11, q:2},
+  {nm:"不朽金身", ds:"不朽真体", r:11, q:3},
+  {nm:"太乙诀", ds:"太乙证道", r:12, q:0},
+  {nm:"太乙五行诀", ds:"五行轮转", r:12, q:1},
+  {nm:"太乙分光诀", ds:"化光分身", r:12, q:2},
+  {nm:"太乙化生诀", ds:"化生万象", r:12, q:3},
+  {nm:"大罗诀", ds:"大罗之基", r:13, q:0},
+  {nm:"万象归一", ds:"万象归一", r:13, q:1},
+  {nm:"诸天灭度", ds:"灭度诸天", r:13, q:2},
+  {nm:"鸿蒙紫气诀", ds:"紫气贯鸿蒙", r:13, q:3},
+  {nm:"证道诀", ds:"超脱之基", r:14, q:0},
+  {nm:"天道教化经", ds:"教化天地众生", r:14, q:1},
+  {nm:"紫霄讲道篇", ds:"紫霄宫中听道", r:14, q:2},
+  {nm:"鸿蒙天道诀", ds:"身合天道，万劫不磨", r:14, q:3},
+]; // 15境界×4品 = 60 本功法
+const GF_Q = [
+  {nm:"下品", attr:0.05, xw:1,  src:"坊市"},
+  {nm:"中品", attr:0.12, xw:3,  src:"拍卖行"},
+  {nm:"上品", attr:0.25, xw:9,  src:"拍卖行"},
+  {nm:"极品", attr:0.50, xw:27, src:"秘境/拍卖行"},
+];
+const wxNeed = R => 120000*Math.pow(3,R);
+const gfPrice = (r,q) => Math.floor(800*Math.pow(3,r)*[1,6,20,60][q]*priceMul());
+const gfXw = () => { if (!S.gfOwned || S.gfMain<0 || !S.gfOwned[S.gfMain]) return 0; const g = GF[S.gfMain]; return Math.min(gfNeed(), S.xw + 100*Math.pow(3,g.r)*GF_Q[g.q].xw/10) - S.xw; };
+const gfNeed = () => wxNeed(S.realm);
+const gfAttr = () => S.gfOwned.reduce((s,o,i)=>o? s+GF_Q[GF[i].q].attr : s, 0);
+const capLeft = i => { const pk = WORLD_PEAK[worldOf(Math.floor(i/2))]; return S.realm>=pk ? 1e9 : Math.max(0, 3-S.owned[i]); };
+const oneCost = i => Math.floor(SHOPS[i].base*Math.pow(1.15,S.owned[i]));
+const maxBuy = i => { let c=0,k=0; const L=capLeft(i); while(k<L && k<1000){ const nc=Math.floor(SHOPS[i].base*Math.pow(1.15,S.owned[i]+k)); if(c+nc>S.qi) break; c+=nc; k++; } return {k,c}; };
+const batchCost = i => { let c=0; for(let k=0;k<S.mul && k<capLeft(i);k++) c += Math.floor(SHOPS[i].base*Math.pow(1.15,S.owned[i]+k)); return c; };
+const rps = () => SHOPS.reduce((s,b,i)=>s+b.rate*S.owned[i]/10,0)*realmMul()*(1+S.rpsPct)*(1+tval("linggen")/100)*(1+achvFx("rps")/100)*(1+0.3*(S.xyUp.rps||0))*(1+0.10*(S.xyUp.stone||0))*(S.secl&&S.secl.until>Date.now()?2.5:1)*(S.path===0?1.4:1);
+const clickPow = () => (1 + CLICKS.reduce((s,c,i)=>s+c.add*S.clicks[i]*refMul(i),0))*realmMul();
+const stageCost = () => Math.floor(80*Math.pow(3.2,S.realm)*Math.pow(S.stage+1,1.4));
+const breakCost = () => Math.floor(300*Math.pow(3.8,S.realm));
+const PATHS = [
+  {id:0, nm:"法修 · 御气宗", ds:"灵气产出 ×1.5 · 逐气而修，仙途坦荡", fx:"rps"},
+  {id:1, nm:"体修 · 炼体宗", ds:"四维属性 ×1.5 · 以身炼道，金刚不坏", fx:"stats"},
+];
+const refMul = i => 1 + 0.25*(S.refine&&S.refine[i]||0);           // 参悟 +25%/级
+const gfa = k => CLICKS.reduce((a,c,i)=>a+(S.clicks[i]?c["g"+k]*refMul(i):0),0);
+const pillFx = k => {
+  const p = PILL_VAL[k]; if(!p) return 0;
+  return Math.round(S.pillU[k]*p.u*Math.pow(p.b,S.realm)*(1+0.02*S.alv)*(1+tval("dan")/100));
+};
+const eqObj = slot => { if (S.eq[slot]==null) return -1; return ({w:WEAPON_NAMES,a:ARMOR_NAMES,t:TREAS_NAMES}[slot]).indexOf(S.eq[slot]); };
+const gear = slot => {
+  const idx = eqObj(slot);
+  if (idx<0) return null;
+  const st = gearStats(idx, slot);
+  const m = (1+0.02*S.elv)*(1+tval("craft")/100);
+  const o = {}; Object.keys(st).forEach(k=>o[k]=Math.round(st[k]*m));
+  o.r = idx; o.nm = ({w:WEAPON_NAMES,a:ARMOR_NAMES,t:TREAS_NAMES})[slot][idx];
+  return o;
+};
+const partner = () => S.partnerSp ? beastOf(S.partnerSp) : null;
+const pstat = () => {
+  const B = RB(S.realm), m = STAGE_MUL[S.stage];
+  const w = gear("w"), a = gear("a"), t = gear("t"), pt = partner();
+  const bm = (1+tval("body")/100)*(1+achvFx("stats")/100)*(1+0.15*(S.xyUp.body||0))*(S.path===1?1.5:1)*(1+gfAttr()), kmt = 1+tval("beast")/100;
+  return {
+    atk: Math.round((Math.round(B.atk*m) + gfa("atk")*realmMul() + (w?w.atk:0) + (t?t.atk:0) + (pt?Math.round(pt.atk*kmt):0) + pillFx("atk"))*bm),
+    def: Math.round((Math.round(B.def*m) + gfa("def")*realmMul() + (a?a.def:0) + (t?t.def:0) + (pt?Math.round(pt.def*kmt):0) + pillFx("def"))*bm),
+    spd: Math.round(B.spd*m) + gfa("spd") + (t?t.spd:0) + (pt?pt.spd:0) + pillFx("spd") + tval("swift"),
+    hp:  Math.round((Math.round(B.hp*m) + gfa("hp")*realmMul() + (t?t.hp:0) + (pt?Math.round(pt.hp*kmt):0) + pillFx("hp"))*bm),
+  };
+};
+const atk = () => pstat().atk, def = () => pstat().def, spd = () => pstat().spd, hp = () => pstat().hp;
+const fmt = n => {
+  if (n < 1e4){
+    if (Number.isInteger(n)) return n.toString();
+    const s = n.toFixed(1);
+    return s.endsWith(".0") ? s.slice(0,-2) : s;
+  }
+  const u = ["万","亿","兆","京","垓","秭"]; let i=-1;
+  while (n >= 1e4 && i < u.length-1){ n/=1e4; i++; }
+  return n.toFixed(n<100?2:1)+u[i];
+};
+const mmss = s => { s=Math.max(0,Math.ceil(s));
+  return s>=3600 ? Math.floor(s/3600)+"时"+Math.ceil(s%3600/60)+"分" : s>=60 ? Math.floor(s/60)+"分"+(s%60)+"秒" : s+"秒"; };
+
+// ═════════ 确定性战斗 ═════════
+function simBattle(e){
+  const p = pstat();
+  const pd = Math.max(1, p.atk - e.def);
+  const ed = Math.max(1, e.atk - p.def);
+  const pFirst = p.spd >= e.spd;
+  const pExtra = p.spd >= e.spd*1.5;
+  const eExtra = e.spd >= p.spd*1.5;
+  let php = p.hp, ehp = e.hp, round = 1, win = false;
+  while (round <= 100){
+    if (pFirst){
+      ehp -= pd*(pExtra?2:1);
+      if (ehp<=0){ win=true; break; }
+      php -= ed*(eExtra?2:1);
+      if (php<=0) break;
+    } else {
+      php -= ed*(eExtra?2:1);
+      if (php<=0) break;
+      ehp -= pd*(pExtra?2:1);
+      if (ehp<=0){ win=true; break; }
+    }
+    round++;
+  }
+  return {win, php, ehp, round, pd, ed, pFirst, pExtra, eExtra};
+}
+function enemyReward(zi, n){
+  const e = enemyOf(zi,n), L = e.L;
+  const r = { qi: Math.round(30*Math.pow(2.5,L)*(1+tval("realm")/100)), stones: Math.round((1.5+1.5*L)*priceMul()*(1+tval("gold")/100)), crystals:0, essence:0, drops:[] };
+  if (e.boss){ r.stones += Math.round((4+L)*2*priceMul()*(1+tval("gold")/100)); r.crystals += Math.round((zi+1)*(1+tval("realm")/100)); if (zi>=4) r.essence += zi-3; }
+  if (n%5===0){ const h = HERBS.filter(x=>x.r===L)[ (n/5-1)%3 ]; S.seeds[h.nm]=(S.seeds[h.nm]||0)+1; r.drops.push(h.nm+"种子×1"); }
+  if (n%5===3){ const mk = ["妖兽皮","妖兽骨","妖兽血"][(n-1)%3], q = 2+Math.floor(L/2);
+    S.inv[mk]=(S.inv[mk]||0)+q; r.drops.push(mk+"×"+q); }
+  if (n%20===0 && e.boss){ const b = BEASTS.filter(x=>x.r===L)[ (n/20-1)%3 ];
+    if (S.beasts.length<penCap()){ S.beasts.push({sp:b.sp, at:Date.now()}); r.drops.push(b.sp+"幼崽！"); }
+    else r.drops.push("兽栏已满，幼崽跑掉"); }
+  if (n===100){ r.crystals += zi+3; if (zi>=4) r.essence += zi-3; }
+  if (Math.random() < 0.0004 || (n%10===0 && Math.random() < 0.004)){   // 全程2400战期望≈2个
+    S.inv["轮回果"] = (S.inv["轮回果"]||0)+1;
+    r.drops.push("轮回果×1 🌰（可用于天赋重修）");
+  }
+  return r;
+}
+function gongfaDrop(zi, r){   // 秘境爆功法：所有品阶，几率低（下40%/中35%/上18%/极7% 内卷）
+  const zb = ZONES[zi].base, R2 = Math.min(13, zb + (Math.random()<0.5?0:1));
+  const roll = Math.random(), qq = roll<0.40?0 : roll<0.75?1 : roll<0.93?2 : 3;
+  const cands = GF.map((g,i)=>i).filter(i=>GF[i].r===R2 && GF[i].q===qq && !S.gfOwned[i]);
+  if (!cands.length) return;
+  const gi = cands[ri(0,cands.length-1)];
+  S.gfOwned[gi] = true; if (S.gfMain < 0) S.gfMain = gi;
+  r.drops.push(`${GF_Q[qq].nm}功法「${GF[gi].nm}」！`);
+  toast(`机缘！秘境爆出${GF_Q[qq].nm}功法「${GF[gi].nm}」`);
+}
+function fight(zi){
+  const prog = S.zprog[zi];
+  if (prog>=100){
+    if (!S.zloop) return {done:true};
+    const e = enemyOf(zi, 100);                      // 循环战斗：反复讨伐第100关首领
+    const bl = simBattle(e);
+    if (bl.win){
+      const r = enemyReward(zi, 100);
+      S.qi += r.qi; S.total += r.qi; S.stones += r.stones; S.crystals += r.crystals; S.essence += r.essence; S.kills++;
+      if (Math.random() < 0.02) gongfaDrop(zi, r);
+      S.zoneLog = S.zoneLog||[];
+      S.zoneLog.unshift(`【循环·第100关】⚔️ 再伏 ${e.nm}（${bl.round}轮）${r.drops&&r.drops.length?" ｜ 掉落："+r.drops.slice(0,3).join("、"):""}`);
+      S.zoneLog = S.zoneLog.slice(0,12);
+      return {win:true, loop:true};
+    }
+    return {win:false};
+  }
+  const e = enemyOf(zi, prog+1);
+  const b = simBattle(e);
+  const zname = ZONES[zi].nm;
+  if (b.win){
+    const r = enemyReward(zi, prog+1);
+    S.qi += r.qi; S.total += r.qi; S.stones += r.stones; S.crystals += r.crystals; S.essence += r.essence;
+    S.zprog[zi] = prog+1; S.kills++;
+    S.zoneLog = S.zoneLog||[];
+    S.zoneLog.unshift(`【第${prog+1}关】⚔️ 击败 ${e.nm}（${b.round}轮）${r.drops&&r.drops.length?" ｜ 掉落："+r.drops.slice(0,3).join("、"):""}`);
+    S.zoneLog = S.zoneLog.slice(0,12);
+    if (Math.random() < 0.02) gongfaDrop(zi, r);
+    if (Math.random() < 0.02){ /* 兼容位 */ }
+    if (false){
+      const cands = [];
+      if (cands.length){
+        const gi = cands[ri(0,cands.length-1)];
+        S.gfOwned[gi] = true; if (S.gfMain < 0) S.gfMain = gi;
+        log.unshift(`【机缘】${zname} 深处得${GF_Q[GF[gi].q].nm}功法「${GF[gi].nm}」，修炼后攻防血+${Math.round(GF_Q[GF[gi].q].attr*100)}%`);
+        toast(`机缘！得${GF_Q[GF[gi].q].nm}功法「${GF[gi].nm}」`);
+      }
+    }
+    log.unshift(`【${zname}·第${prog+1}关】斩 ${e.nm}：${b.round}轮 先手${b.pFirst?"我":"敌"}${b.pExtra?"·连击":""}，余血${fmt(Math.max(0,b.php))}。得 灵气${fmt(r.qi)} 灵石${r.stones}${r.crystals?" 灵晶"+r.crystals:""}${r.essence?" 仙元石"+r.essence:""}${r.drops.length?"，拾得 "+r.drops.join("、"):""}`);
+  } else {
+    log.unshift(`【${zname}·第${prog+1}关】不敌 ${e.nm}（攻${fmt(e.atk)} 防${fmt(e.def)} 速${fmt(e.spd)} 血${fmt(e.hp)}），退走重修。你每轮伤敌 ${fmt(b.pd)}，需 ${Math.ceil(e.hp/Math.max(1,b.pd))} 轮击杀；敌每轮伤你 ${fmt(b.ed)}，你可撑 ${Math.floor(hp()/Math.max(1,b.ed))} 轮`);
+  }
+  log.length = Math.min(log.length, 24);
+  dirty = true; render(); save();
+  return b;
+}
+function simRounds(zi, n){
+  return simBattle(enemyOf(zi, n)).round;   // 直接用真实模拟轮数，≤100
+}
+function autoFight(zi, card){
+  const e0 = enemyOf(zi, S.zprog[zi]+1);
+  const pd0 = Math.max(1, atk()-e0.def);
+  if (pd0*100 < e0.hp){
+    toast("此敌当前打不动（百回合内破不了防），先提升攻防/丹药/妖兽再来"); return;
+  }
+  const step = (card)=>{
+    if (S.zprog[zi]>=100 && !S.zloop){ toast("本境已清空！"); battleBusy=false; dirty=true; render(); save(); return; }
+    battleAnim(card, zi, S.zprog[zi]+1, ()=>{
+      const b = fight(zi);
+      if (!b.win){ S.zoneLog=(S.zoneLog||[]); S.zoneLog.unshift(`❌ 不敌 ${(S.zprog[zi]>=100)?"镇关首领":enemyOf(zi,Math.min(100,S.zprog[zi]+1)).nm}，${S.zloop?"循环中止":"止步于第"+Math.min(100,S.zprog[zi]+1)+"关"}`); S.zoneLog=S.zoneLog.slice(0,12);
+      toast("战败，需提升修为"); battleBusy=false; dirty=true; render(); save(); return; }
+      if (b.done){ toast("本境已清空！"); battleBusy=false; dirty=true; render(); save(); return; }
+      curFight = {zi, n: Math.min(100, S.zprog[zi]+1)};
+      dirty=true; render();
+      renderZones();
+      const nc = $("zones").querySelector('[data-zi="'+zi+'"]');
+      setTimeout(()=>step(nc||card), 80);
+    });
+  };
+  battleBusy = true; step(card);
+}
+
+// ═════════ 页签 ═════════
+const TABS = [["cult","修 炼"],["market","坊 市"],["map","舆 图"],["realm","秘 境"],["field","灵 田"],["pen","兽 栏"],["alc","炼 丹"],["smi","炼 器"],["bag","背 包"],["dece","道 册"],["auction","拍卖行"]];
+let tab = "cult";
+function switchTab(t){
+  document.querySelectorAll(".sec").forEach(x=>x.classList.remove("on"));
+  $("sec-"+t).classList.add("on");
+  document.querySelectorAll(".tabbar button").forEach(x=>x.classList.remove("on"));
+  tab = t; dirty = true; render();
+  const cur = [...document.querySelectorAll(".tabbar button")].find(x=>x.dataset.t===t);
+  if (cur) cur.classList.add("on");
+}
+
+let dirty = true;
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+let tribLog = [];
+function checkLife(){
+  if (S.life <= 0){ toast("寿元耗尽！形神枯槁，坐化转世……"); doAscend(true); }
+}
+function doSecl(){
+  const cost = Math.round(150*Math.pow(3.2, S.realm)*priceMul()*(1+S.realm*0.5));
+  if (S.stones < cost){ toast(`闭关需 ${fmt(cost)} 灵石备足静室灵石`); return; }
+  if (S.secl.until > Date.now()){ toast("已在闭关中"); return; }
+  S.stones -= cost;
+  S.secl = {until: Date.now() + 30*60000};
+  toast(`闭关悟道！30 分钟内灵气产出 ×3（期间不可入秘境厮杀）`);
+  dirty=true; render(); save();
+}
+let ascendArmed = 0;
+function doAscend(force){
+  if (force !== true){
+    const btn = $("breakBtn");
+    if (Date.now() - ascendArmed > 3000){
+      ascendArmed = Date.now();
+      btn.textContent = "⚠️ 再点一次确认飞升（3秒内有效）：境界/装备/丹药/妖兽/秘境归零，换仙缘转世";
+      setTimeout(()=>{ if (Date.now()-ascendArmed >= 3000 && S.realm>=13 && S.stage>=3) renderCult(); }, 3100);
+      return;
+    }
+    ascendArmed = 0;
+  }
+  let gain = 12 + 2*S.zprog.filter(z=>z>=100).length + Object.keys(S.achv).length;
+  if (force === true){ gain = Math.round(gain*0.6); toast(`此世功业折半随缘，得仙缘 ${gain} 点`); }
+  S.life = 80;
+  S.xy += gain; S.ascend++;
+  S.qi = 0; S.total = 0; S.owned = SHOPS.map(()=>0); S.clicks = CLICKS.map(()=>0);
+  S.realm = 0; S.stage = 0; S.mul = 1; S.partnerSp = null; S.breed = null;
+  S.inv = {}; S.seeds = {}; S.harvestN = {}; S.plots = [null,null]; S.beasts = [];
+  S.eq = {w:null,a:null,t:null}; S.pillU = {atk:0,def:0,spd:0,hp:0}; S.pillCount = {atk:0,def:0,spd:0,hp:0,rps:0}; S.rpsPct = 0;
+  S.stones = 2000*(S.xyUp.stone||0); S.crystals = 0; S.essence = 0;
+  S.zprog = [0,0,0,0,0,0,0]; S.missions = [];
+  toast(`飞升！携 ${gain} 仙缘点转世重修。仙缘可在【道册】换仙家神通`);
+  tribLog.unshift(`【飞升】第${S.ascend}世开启，得仙缘 ${gain} 点`);
+  dirty=true; render(); save();
+}
+function signToday(){
+  const d = new Date().toISOString().slice(0,10);
+  if (S.sign.d === d) return false;
+  return d;
+}
+function doSign(){
+  const d = signToday(); if (!d) return;
+  S.sign = {d, n:(S.sign.n||0)+1};
+  const qi = Math.round(rps()*600), st = 5+3*S.realm;
+  S.qi += qi; S.stones += st;
+  let msg = `签到第${S.sign.n}天：灵气+${fmt(qi)} 灵石+${st}`;
+  if (S.sign.n % 7 === 0){ S.crystals += 3; msg += " 灵晶+3（连签七日贺礼）"; }
+  toast(msg); dirty=true; render(); save();
+}
+function settleMissions(){
+  const now = Date.now(); let done = [];
+  S.missions = S.missions.filter(m=>{
+    if (now - m.at >= m.need){
+      const stones = Math.round(6*Math.pow(2,m.r)*m.mult*(1+tval("gold")/100));
+      S.stones += stones;
+      const h = HERBS.filter(x=>x.r===m.r)[m.d%3];
+      S.seeds[h.nm] = (S.seeds[h.nm]||0)+1;
+      const mk = ["妖兽皮","妖兽骨","妖兽血"][m.d%3], q = 2+Math.round(m.mult);
+      S.inv[mk] = (S.inv[mk]||0)+q;
+      let extra = m.mult>=4 ? " 灵晶+1" : "";
+      if (m.mult>=4) S.crystals += 1;
+      const rec = `${m.sp}：灵石+${fmt(stones)} · ${h.nm}种子×1 · ${mk}×${q}${extra}`;
+      S.mLog.unshift({txt: rec, t: now});
+      if (S.mLog.length>10) S.mLog.length = 10;
+      toast(`${m.sp} 探索归来：灵石+${fmt(stones)} ${h.nm}种子×1 ${mk}×${q}${extra}`);
+      return false;
+    }
+    return true;
+  });
+  if (done.length) dirty=true;
+}
+
+function normalizeState(){
+  const W = worldOf(S.realm);
+  if (!Array.isArray(S.zprog) || S.zprog.length !== ZONES.length){
+    const old = Array.isArray(S.zprog)?S.zprog:[];
+    const map = [0,3,7,10,13,16,20]; // 旧7图base[0,2,4,6,8,10,12] → 新24图首个同底index
+    S.zprog = new Array(ZONES.length).fill(0);
+    old.slice(0,7).forEach((v,i)=>{ if (map[i]!==undefined) S.zprog[map[i]] = v; });
+  }
+  while (S.plots.length < plotsCap()) S.plots.push(null);
+  if (!CITIES[S.city] || CITIES[S.city].world !== W){
+    S.city = CITIES.findIndex(c=>c.world===W);
+    if (S.city<0) S.city = 0;
+  }
+  S.missions = (S.missions||[]).filter(m=>beastOf(m.sp));
+  if (!Array.isArray(S.owned) || S.owned.length < SHOPS.length){
+    const old = Array.isArray(S.owned) ? S.owned : [];
+    S.owned = SHOPS.map((b,i)=>old[i]||0);
+  }
+  if (!Array.isArray(S.gfOwned) || S.gfOwned.length < GF.length){
+    const old = Array.isArray(S.gfOwned) ? S.gfOwned : [];
+    S.gfOwned = GF.map((g,i)=>!!old[i]);
+  }
+  if (!(typeof S.gfMain === "number" && S.gfMain >= 0 && S.gfMain < GF.length && S.gfOwned[S.gfMain])) S.gfMain = -1;
+  S.xw = +S.xw || 0;
+}
+function checkAchv(){
+  ACHV.forEach(a=>{
+    if (!S.achv[a.id] && a.cond()){
+      S.achv[a.id] = 1;
+      toast(`成就达成【${a.nm}】${a.title?"，获得称号「"+a.title+"」":""}`);
+      dirty = true;
+    }
+  });
+}
+// ═════════ 渲染 ═════════
+function render(){
+  if (!dirty) return; dirty = false;
+  normalizeState();
+  checkAchv();
+  const p = pstat();
+  $("statusBar").innerHTML =
+    `<div class="stat"><div class="k">灵气</div><div class="v">${fmt(S.qi)}</div></div>`+
+    `<div class="stat"><div class="k">每秒</div><div class="v">${fmt(rps())}</div></div>`+
+    `<div class="stat"><div class="k">境界</div><div class="v" style="font-size:13px">${REALMS[S.realm]}<span class="sub">${STAGES[S.stage]}</span></div></div>`+
+    `<div class="stat"><div class="k">修为</div><div class="v" style="font-size:13px">${fmt(S.xw)}${S.xw>=wxNeed(S.realm)?'<span class="sub">圆满✅</span>':''}</div></div>`+
+    `<div class="stat"><div class="k">攻击</div><div class="v">${fmt(p.atk)}</div></div>`+
+    `<div class="stat"><div class="k">防御</div><div class="v">${fmt(p.def)}</div></div>`+
+    `<div class="stat"><div class="k">速度</div><div class="v">${fmt(p.spd)}</div></div>`+
+    `<div class="stat"><div class="k">血量</div><div class="v">${fmt(p.hp)}</div></div>`+
+    `<div class="stat cur"><div class="k">灵石</div><div class="v">${fmt(S.stones)}</div></div>`+
+    `<div class="stat cry"><div class="k">灵晶</div><div class="v">${fmt(S.crystals)}</div></div>`+
+    `<div class="stat ess"><div class="k">仙元石</div><div class="v">${fmt(S.essence)}</div></div>`;
+  $("cpow").textContent = fmt(clickPow());
+  if (tab==="cult") renderCult();
+  else if (tab==="market") renderMarket();
+  else if (tab==="auction") renderAuction();
+  else if (tab==="realm") renderZones();
+  else if (tab==="field") renderField();
+  else if (tab==="pen") renderPen();
+  else if (tab==="alc") renderAlc();
+  else if (tab==="smi") renderSmi();
+  else if (tab==="bag") renderBag();
+  else if (tab==="map") renderMap();
+  else if (tab==="dece") renderDece();
+}
+function renderBag(){
+  const box = $("bagList"); if (!box) return;
+  box.innerHTML = "";
+  let n = 0;
+  const add = (nm, qty, ds, use) => {
+    const div = document.createElement("div");
+    div.className = "row";
+    const right = use
+      ? `<div class="cost">×${fmt(qty)} <button class="mini" data-use="${nm}">${use}</button></div>`
+      : `<div class="cost">×${fmt(qty)}</div>`;
+    div.innerHTML = rowHTML(nm, ds, right);
+    if (use) div.querySelector("[data-use]").onclick = ()=>bagUse(nm);
+    box.appendChild(div); n++;
+  };
+  const pillKindOf = nm => nm.includes("力道")?"atk":nm.includes("铁骨")?"def":nm.includes("疾风")?"spd":nm.includes("血气")?"hp":nm.includes("聚气")?"rps":null;
+  // 轮回果
+  if (S.inv["轮回果"]) add("🌰 轮回果", S.inv["轮回果"], "天道奇果 · 使用后进入灵台问道，以果重修天赋（不耗灵石）", "使 用");
+  // 丹药（库存形态：力道丹/铁骨丹/疾风丹/血气丹/聚气丹，含境界前缀）
+  Object.keys(S.inv||{}).forEach(k=>{
+    const kk = pillKindOf(k);
+    if (kk && S.inv[k]) add(k, S.inv[k], `丹药 · 服用后${kk==="rps"?"灵气产出永久 +0.8%":"四维永久提升（受耐药上限约束）"}`, "服 用");
+  });
+  // 灵草
+  HERBS.forEach(h=>{ const q = S.inv[h.nm]||0; if (q) add(h.nm, q, "灵草 · 炼丹材料，或于坊市出售"); });
+  // 材料
+  Object.keys(MATS).forEach(m=>{ const q = S.inv[m]||0; if (q) add(m, q, `炼器材料 · 出售得 ${MATS[m]} 灵石/个`); });
+  // 其他杂项（兜底：未分类 inv 物品）
+  const known = new Set(["轮回果", ...HERBS.map(h=>h.nm), ...Object.keys(MATS)]);
+  Object.keys(S.inv||{}).forEach(k=>{ if (!known.has(k) && !pillKindOf(k) && S.inv[k]) add(k, S.inv[k], "杂物"); });
+  // 种子
+  Object.keys(S.seeds||{}).forEach(nm=>{ const q = S.seeds[nm]; if (q) add(nm+"种子", q, "灵田播种用 · 播后随真实时间生长", "去播种"); });
+  // 已装备
+  const eqn = [S.eq.w, S.eq.a, S.eq.t].filter(Boolean).length;
+  if (eqn) add("已装备法宝/护甲/兵刃", eqn, [S.eq.w&&"兵刃·"+S.eq.w, S.eq.a&&"护甲·"+S.eq.a, S.eq.t&&"法宝·"+S.eq.t].filter(Boolean).join(" · "));
+  if (!n) box.innerHTML = `<div class="hint">乾坤袋空空如也——坊市购丹、秘境历练、灵田收成都会进到这里</div>`;
+}
+function bagUse(nm){
+  if (nm === "🌰 轮回果" || nm.includes("轮回果")){
+    if ((S.inv["轮回果"]||0) < 1){ toast("没有轮回果"); return; }
+    talOpen(); toast("轮回果在手——点【轮回果重修】即引果入腹");
+    return;
+  }
+  if (nm.endsWith("种子") || nm.endsWith("去播种")){
+    switchTab("field"); toast("已至灵田——选一块灵田播种");
+    return;
+  }
+  const kk = nm.includes("力道")?"atk":nm.includes("铁骨")?"def":nm.includes("疾风")?"spd":nm.includes("血气")?"hp":nm.includes("聚气")?"rps":null;
+  if (kk){
+    if ((S.inv[nm]||0) < 1){ toast("此丹已尽"); return; }
+    if ((S.pillCount[kk]||0)+1 > tcap()){ toast("耐药已满，此丹服不下了"); return; }
+    S.inv[nm]--;
+    if (kk === "rps"){ S.rpsPct = Math.min(10, S.rpsPct+0.08); toast("服下 "+nm+"：灵气产出 +0.8%"); }
+    else { S.pillU[kk] = (S.pillU[kk]||0)+1; S.pillCount[kk] = (S.pillCount[kk]||0)+1; toast("服下 "+nm+"：四维永久提升"); }
+    dirty=true; renderBag(); save();
+    return;
+  }
+  toast("此物不可直接使用");
+}
+function renderMap(){
+  const svg = $("mapSvg"); if (!svg) return;
+  const W = worldOf(S.realm), th = WORLDS[W].theme;
+  const zs = ZONES.filter(z=>z.world===W);
+  const cs = CITIES.filter(c=>c.world===W);
+  let s = `<defs>
+    <linearGradient id="sky${W}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${th[1]}"/><stop offset="1" stop-color="${th[0]}" stop-opacity="0.45"/>
+    </linearGradient>
+    <radialGradient id="moon${W}" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff8e0" stop-opacity="0.95"/><stop offset="0.7" stop-color="${th[2]}" stop-opacity="0.5"/><stop offset="1" stop-color="${th[2]}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="0" y="0" width="700" height="430" fill="url(#sky${W})" rx="12"/>
+  <rect x="4" y="4" width="692" height="422" rx="10" fill="none" stroke="${th[2]}" stroke-width="1.5" opacity="0.45"/>
+  <rect x="8" y="8" width="684" height="414" rx="8" fill="none" stroke="${th[2]}" stroke-width="0.6" opacity="0.3"/>
+  <circle cx="636" cy="64" r="40" fill="url(#moon${W})"/>
+  <ellipse cx="180" cy="88" rx="46" ry="12" fill="#ffffff" opacity="0.18"/>
+  <ellipse cx="212" cy="80" rx="30" ry="9" fill="#ffffff" opacity="0.14"/>
+  <ellipse cx="430" cy="120" rx="38" ry="10" fill="#ffffff" opacity="0.13"/>
+  <path d="M0 330 Q 90 300 180 322 T 380 318 T 580 324 T 700 318 L700 430 L0 430 Z" fill="${th[0]}" opacity="0.35"/>
+  <path d="M0 355 Q 120 335 240 352 T 480 350 T 700 348 L700 430 L0 430 Z" fill="${th[0]}" opacity="0.5"/>
+  <path d="M0 300 Q 60 260 130 290 Q 200 250 270 292 Q 340 248 410 288 Q 480 252 550 290 Q 620 255 700 292 L700 340 Q 600 330 500 336 L0 340 Z" fill="${th[2]}" opacity="0.22"/>
+  <path d="M-10 372 C 140 358 260 380 400 368 C 520 358 620 374 710 364 L 710 384 C 600 390 480 376 360 384 C 220 392 100 378 -10 388 Z" fill="#6a9ab8" opacity="0.28"/>
+  <rect x="30" y="30" width="150" height="52" rx="6" fill="${th[1]}" opacity="0.85" stroke="${th[2]}" stroke-width="1.2"/>
+  <rect x="26" y="26" width="150" height="52" rx="6" fill="none" stroke="${th[2]}" stroke-width="0.6" opacity="0.5"/>
+  <text x="40" y="56" font-size="22" font-weight="bold" fill="${th[2]}">${WORLDS[W].nm}</text>
+  <text x="40" y="74" font-size="11" fill="${th[2]}" opacity="0.8">${W===0?"炼气 · 筑基 · 金丹 · 元婴 · 化神":W===1?"炼虚 · 合体 · 大乘 · 渡劫 · 散仙":"真仙 · 金仙 · 太乙 · 大罗"} · 不可下界</text>
+  <g opacity="0.75">
+    <circle cx="668" cy="394" r="17" fill="${th[1]}" stroke="${th[2]}" stroke-width="1" opacity="0.8"/>
+    <path d="M668 382 L672 394 L668 391 L664 394 Z" fill="#c04a3a"/>
+    <text x="668" y="406" text-anchor="middle" font-size="8" fill="${th[2]}">北</text>
+  </g>`;
+  const colX = i => 96 + i*168;
+  zs.forEach((z,k)=>{
+    const zi = ZONES.indexOf(z);
+    const x = colX(k%4) + (k<4?0:22), yz = k<4 ? 148 : 306;
+    const unlocked = S.realm >= z.base;
+    const icon = k%3;
+    const zicon = icon===0 ? `<path d="M${x-6} ${yz+24} Q ${x-2} ${yz+6} ${x+6} ${yz+24} Z" fill="#2c2620" opacity="0.55"/>`
+      : icon===1 ? `<circle cx="${x+16}" cy="${yz+14}" r="6" fill="#c04a3a" opacity="${unlocked?0.5:0.2}"/>`
+      : `<path d="M${x-12} ${yz+20} L${x-6} ${yz+8} L${x} ${yz+20} Z" fill="#e8d5ac" opacity="0.6"/>`;
+    s += `<g data-a="zone" data-i="${zi}" style="cursor:${unlocked?"pointer":"not-allowed"}">
+      <polygon points="${x-34},${yz+26} ${x},${yz-24} ${x+34},${yz+26}" fill="${th[2]}" opacity="${unlocked?0.75:0.3}"/>
+      <polygon points="${x+8},${yz+26} ${x+24},${yz-4} ${x+40},${yz+26}" fill="${th[2]}" opacity="${unlocked?0.45:0.2}"/>
+      ${zicon}
+      ${unlocked?`<polygon points="${x-4},${yz-24} ${x-4},${yz-46} ${x+14},${yz-37} ${x-4},${yz-28}" fill="#c04a3a" stroke="#8a3226" stroke-width="0.8"/>
+      <line x1="${x-4}" y1="${yz-24}" x2="${x-4}" y2="${yz-8}" stroke="#5a4632" stroke-width="1.4"/>`:""}
+      <text x="${x}" y="${yz+44}" text-anchor="middle" font-size="12.5" font-weight="bold" fill="${unlocked?th[2]:"#9a958a"}">${z.nm} <tspan font-size="10" font-weight="normal" opacity="0.85">${unlocked? `· ${REALMS[z.base]} ${S.zprog[zi]}/100` : `· 需${REALMS[z.base]}`}</tspan></text></g>`;
+  });
+  s += `<path d="M96 388 L264 388 M264 382 L436 382 M436 388 L608 388" stroke="${th[2]}" stroke-width="1" opacity="0.3" stroke-dasharray="4 4"/>
+  <path d="M96 232 L264 232 M264 226 L436 226 M436 232 L630 232" stroke="${th[2]}" stroke-width="1" opacity="0.3" stroke-dasharray="4 4"/>
+  <path d="M118 226 L118 372 M340 220 L340 372 M562 220 L562 372" stroke="${th[2]}" stroke-width="1" opacity="0.22" stroke-dasharray="3 5"/>`;
+  cs.forEach((c,k)=>{
+    const ci = CITIES.indexOf(c);
+    const x = colX(k%4) + (k<4?0:22), yc = k<4 ? 240 : 398;
+    const unlocked = S.realm >= c.unlock;
+    s += `<g data-a="city" data-i="${ci}" style="cursor:${unlocked?"pointer":"not-allowed"}">
+      <rect x="${x-34}" y="${yc-26}" width="68" height="46" rx="8" fill="${S.city===ci?"#f3e2b8":unlocked?"#fffdf6":"#e4e0d4"}" stroke="${S.city===ci?th[2]:"#b0a890"}" stroke-width="${S.city===ci?2.5:1.2}"/>
+      <polygon points="${x-12},${yc-26} ${x},${yc-38} ${x+12},${yc-26}" fill="${S.city===ci?th[2]:"#b0a890"}"/>
+      <line x1="${x}" y1="${yc-38}" x2="${x+16}" y2="${yc-34}" stroke="#5a4632" stroke-width="1"/>
+      <path d="M${x+16} ${yc-37} L${x+26} ${yc-34} L${x+16} ${yc-30} Z" fill="${S.city===ci?"#c04a3a":"#b0a890"}"/>
+      <text x="${x}" y="${yc-6}" text-anchor="middle" font-size="12" font-weight="bold" fill="${unlocked?th[2]:"#9a958a"}">${c.nm}</text>
+      <text x="${x}" y="${yc+12}" text-anchor="middle" font-size="9.5" fill="${th[2]}" opacity="0.8">${unlocked? (S.city===ci?"【现居】":"点击迁居") : `需 ${REALMS[c.unlock]}`}</text></g>`;
+  });
+  svg.innerHTML = s;
+  svg.querySelectorAll('[data-a="zone"]').forEach(g=>{ g.onclick = ()=>switchTab("realm"); });
+  svg.querySelectorAll('[data-a="city"]').forEach(g=>{ g.onclick = ()=>travel(+g.getAttribute("data-i")); });
+}
+
+
+// ── 天赋弹窗 ──
+function talOpen(){
+  if (!S.troll) S.troll = rollTalents();
+  S.talSel = S.talSel||[];
+  S.talLock = S.talLock||[];
+  renderTalModal();
+  $("talentModal").classList.add("open");
+}
+function renderTalModal(){
+  const box = $("talCards"); box.innerHTML = "";
+  S.troll.forEach((t,i)=>{
+    const T = TALENTS.find(x=>x.id===t.id);
+    const sel = S.talSel.includes(i);
+    const locked = (S.talLock||[]).includes(i);
+    const div = document.createElement("div");
+    div.className = "talcard"+(sel?" sel":"");
+    div.style.borderColor = TIER_COLORS[t.tier];
+    if (locked) div.style.background = "rgba(90,140,80,.14)";
+    div.innerHTML = `<div class="tt" style="color:${TIER_COLORS[t.tier]}">${TIER_NAMES[t.tier]}阶 · ${T.nm}</div>
+      <div class="td">${T.ds.replace(/X/g, T.vals[t.tier])}${T.cap?`（耐药上限+${T.cap[t.tier]}）`:""}</div>
+      <button class="mini tallock" data-i="${i}" style="margin-top:6px;${locked?"":"opacity:.55"}">${locked?"🔒 已锁定（不刷新）":"🔓 锁定此签"}</button>`;
+    div.onclick = ()=>{
+      if (sel){ S.talSel = S.talSel.filter(x=>x!==i); }
+      else { if (S.talSel.length>=3) { toast("至多择三，先取消一项"); return; } S.talSel.push(i); }
+      renderTalModal();
+    };
+    box.appendChild(div);
+  });
+  const rf = $("talRefresh");
+  rf.textContent = S.tRolls<5 ? `重修天赋（免费 ${5-S.tRolls} 次，之后 30 灵石/次 · 可无限刷）` : `重修天赋（30 灵石 · 可无限刷新）`;
+  const fr = $("talFruit");
+  if (fr){
+    const fn = S.inv["轮回果"]||0;
+    fr.textContent = `轮回果重修（持有 ${fn}）`;
+    fr.disabled = fn<1;
+    fr.onclick = ()=>{
+      if ((S.inv["轮回果"]||0)<1){ toast("没有轮回果——任何境界的秘境中都有极低几率爆出"); return; }
+      S.inv["轮回果"]--; dirty = true;
+      const lk = S.talLock||[];
+      S.troll = S.troll.map((t,i)=> lk.includes(i) ? t : {id:t.id, tier:rollTier()});
+      S.talSel = S.talSel.filter(i=> lk.includes(i));
+      toast("轮回果入腹，前世记忆翻涌，天赋重修！（不耗灵石）");
+      renderTalModal(); save();
+    };
+  }
+  rf.disabled = S.tRolls>=5 && S.stones<30;
+  rf.onclick = ()=>{
+    if (S.tRolls>=5){ if (S.stones<30) return; S.stones-=30; }
+    S.tRolls++;
+    const lk = S.talLock||[];
+    S.troll = S.troll.map((t,i)=> lk.includes(i) ? t : {id:t.id, tier:rollTier()});   // 锁定签不重掷
+    S.talSel = S.talSel.filter(i=> lk.includes(i));   // 保留锁定签的选中状态
+    renderTalModal(); save();
+  };
+  box.querySelectorAll(".tallock").forEach(btn=>{
+    btn.onclick = e => {
+      e.stopPropagation();
+      const i = +btn.dataset.i;
+      S.talLock = S.talLock||[];
+      if (S.talLock.includes(i)){ S.talLock = S.talLock.filter(x=>x!==i); }
+      else {
+        if (S.talLock.length>=3){ toast("至多锁定三签，先解锁一项"); return; }
+        S.talLock.push(i);
+      }
+      renderTalModal();
+    };
+  });
+  const cf = $("talConfirm");
+  cf.disabled = S.talSel.length!==3;
+  cf.onclick = ()=>{
+    if (S.talSel.length!==3) return;
+    S.talents = S.talSel.map(i=>S.troll[i]);
+    $("talentModal").classList.remove("open");
+    toast(`天赋已定：${S.talents.map(t=>{const T=TALENTS.find(x=>x.id===t.id);return `${TIER_NAMES[t.tier]}·${T.nm}`}).join("、")}`);
+    dirty=true; render(); save();
+  };
+}
+function talViewHTML(){
+  if (!S.talents) return "";
+  return `<div class="mulbar"><span>天赋：</span>`+S.talents.map(t=>{
+    const T = TALENTS.find(x=>x.id===t.id);
+    return `<span class="talchip" style="border-color:${TIER_COLORS[t.tier]};color:${TIER_COLORS[t.tier]}">${T.nm}·${TIER_NAMES[t.tier]}阶</span>`;
+  }).join("")+`</div>`;
+}
+
+function rowHTML(nm, ds, right){ return `<div><div class="nm">${nm}</div><div class="ds">${ds}</div></div><div class="right">${right}</div>`; }
+
+function renderCult(){
+  const tv = $("talView"); if (tv) tv.innerHTML = talViewHTML();
+  const gb = $("gfBox");
+  if (gb){
+    const R = S.realm, wxn = wxNeed(R), full = S.xw >= wxn, attr = gfAttr();
+    let html = `<div class="mulbar"><span>修为：<b>${fmt(S.xw)}</b> / ${fmt(wxn)}${full?" ✅ 圆满":""} · 主修功法每10秒吞吐灵机</span></div>`+
+      `<div class="pbar"><i style="width:${Math.min(100,S.xw/wxn*100)}%"></i></div>`+
+      `<div class="hint">已修炼 ${S.gfOwned.filter(Boolean).length}/${GF.length} 本 · 属性加成 攻防血 +${Math.round(attr*100)}%${S.gfMain<0?" · <b style='color:#c00'>尚未主修功法，无法积攒修为</b>":""}</div>`;
+    GF.filter(g=>g.r===R).forEach(g=>{
+      const gi = GF.indexOf(g), q = GF_Q[g.q], owned = S.gfOwned[gi], isMain = S.gfMain===gi;
+      const price = gfPrice(g.r, g.q);
+      if (!owned){
+        const btn = q.src==="坊市"
+          ? `<button class="mini" data-gfi="${gi}" data-a="gfBuy">坊市购得（${fmt(price)} 灵气）</button>`
+          : `<div class="own">${g.q===3 ? "仅秘境机缘爆出" : "拍卖行竞价 · 或秘境机缘爆出"}</div>`;   // 中上极不可直购寻宝
+        html += rowHTML(`${q.nm}·${g.nm}`, `${g.ds} · 修炼后 攻防血+${Math.round(q.attr*100)}% · 每10秒+${fmt(100*Math.pow(3,g.r)*q.xw)}修为`, btn);
+      } else {
+        html += rowHTML(`${q.nm}·${g.nm}${isMain?" ★主修":""}`,
+          `${g.ds} · 每10秒+${fmt(100*Math.pow(3,g.r)*q.xw)}修为 · 攻防血+${Math.round(q.attr*100)}%`,
+          isMain ? `<div class="cost">★ 主修中</div>` : `<button class="mini" data-gfi="${gi}" data-a="gfMain">设为主修</button>`);
+      }
+    });
+    gb.innerHTML = html;
+    gb.querySelectorAll("button[data-a]").forEach(btn=>{
+      const gi = +btn.dataset.gfi; if (!(gi >= 0) || !GF[gi]) return; const price = gfPrice(S.realm, GF[gi].q);
+      const go = label => { S.gfOwned[gi] = true; if (S.gfMain < 0) S.gfMain = gi;
+        toast(`${label}「${GF[gi].nm}」！已修炼入体${S.gfMain===gi?"，开始吞吐灵机积攒修为":""}`);
+        dirty = true; render(); save(); };
+      if (btn.dataset.a === "gfBuy")   btn.onclick = ()=>{ if (S.qi < price) return; S.qi -= price; go("坊市购得"); };
+      if (btn.dataset.a === "gfAuct")  btn.onclick = ()=>{ if (S.qi < price) return; S.qi -= price; go("拍卖行一掷千金，拍得"); };
+      if (btn.dataset.a === "gfMain")  btn.onclick = ()=>{ S.gfMain = gi; toast(`转修「${GF[gi].nm}」，吞吐灵机大进`); dirty = true; render(); save(); };
+    });
+  }
+  const btn = $("breakBtn");
+  const maxRealm = S.realm >= REALMS.length-1, maxStage = S.stage >= 3;
+  if (maxRealm && maxStage){
+    btn.textContent = "白日飞升 · 轮回再修（道途尽处，携仙缘转世）"; btn.disabled = false;
+    btn.onclick = doAscend;
+  } else if (maxStage){
+    const c = breakCost();
+    const cross = S.realm===4 || S.realm===9;
+    const wxn = wxNeed(S.realm), wxok = S.xw >= wxn;
+    const noTrib = S.realm < 2;   // 金丹之前水到渠成，金丹起须渡天劫
+    btn.textContent = !wxok
+      ? `修为未圆满（${fmt(S.xw)} / ${fmt(wxn)}）· 主修功法吞吐灵机以积修为`
+      : noTrib
+      ? `破境 → ${REALMS[S.realm+1]}·前期（需 ${fmt(c)} 灵气 · 修为圆满，水到渠成）`
+      : cross
+      ? `天劫 · 飞升${WORLDS[worldOf(S.realm)+1].nm}（需 ${fmt(c)} 灵气引雷 + 修为圆满，界劫倍强，胜则位列新界）`
+      : `引动天劫 → 渡 ${REALMS[S.realm+1]}·雷劫（需 ${fmt(c)} 灵气 + 修为圆满，战而胜之方破境）`;
+    btn.disabled = !wxok || S.qi < c;
+    btn.onclick = ()=>{ if (!wxok || S.qi < c) return;
+      S.qi -= c;
+      if (noTrib){
+        S.realm++; S.stage=0; S.xw=0;
+        const lifeGain = LIFE[S.realm] - LIFE[S.realm-1]; S.life += lifeGain;
+        tribLog.unshift(`【水到渠成】修为圆满，晋升 ${REALMS[S.realm]}·前期，寿元上限 ${fmt(LIFE[S.realm])} 年`);
+        toast(`修为圆满！晋升 ${REALMS[S.realm]}·前期，天地气象一新！`);
+        dirty=true; render(); save(); return;
+      }
+      const e = tribOf(S.realm+1), b = simBattle(e);
+      if (b.win){
+        const crossed = S.realm===4 || S.realm===9;
+        S.realm++; S.stage=0; S.tribWins++; S.xw=0;
+        const lifeGain = LIFE[S.realm] - LIFE[S.realm-1];
+        S.life += lifeGain;
+        tribLog.unshift(`寿元上限提升至 ${fmt(LIFE[S.realm])} 年`);
+        if (crossed){ S.city = CITIES.findIndex(cc=>cc.world===worldOf(S.realm)); }
+        toast(crossed
+          ? `界劫轰碎！飞升 ${WORLDS[worldOf(S.realm)].nm}！此地万物气象迥异，不可下界`
+          : `雷劫轰碎！晋升 ${REALMS[S.realm]}·前期，天地气象一新！`);
+        tribLog.unshift(`【渡劫】${e.nm}：${b.round}轮，余血${fmt(Math.max(0,b.php))} —— ${crossed?"飞升"+WORLDS[worldOf(S.realm)].nm:"晋升 "+REALMS[S.realm]}`);
+      } else {
+        S.tribFails++;
+        if (S.realm >= 10){
+          tribLog.unshift(`【渡劫】${e.nm}：不敌（攻${fmt(e.atk)} 防${fmt(e.def)} 血${fmt(e.hp)}），雷火焚身退回圆满——仙体不朽，不损寿元`);
+        } else {
+          S.life -= 10;
+          tribLog.unshift(`【渡劫】${e.nm}：不敌（攻${fmt(e.atk)} 防${fmt(e.def)} 血${fmt(e.hp)}），雷火焚身退回圆满，折寿 10 年`);
+          checkLife();
+        }
+      }
+      tribLog.length = Math.min(tribLog.length, 5);
+      dirty=true; render(); save();
+    };
+  } else {
+    const c = stageCost();
+    btn.textContent = `进阶 → ${REALMS[S.realm]}·${STAGES[S.stage+1]}（需 ${fmt(c)} 灵气，四维提升）`;
+    btn.disabled = S.qi < c;
+    btn.onclick = ()=>{
+      if (S.qi < c) return;
+      S.qi -= c;
+      { S.stage++; toast(`境界精进：${REALMS[S.realm]}·${STAGES[S.stage]}，攻防速血全面提升`); }
+      $("mood").textContent = MOODS[Math.floor(Math.random()*MOODS.length)];
+      dirty=true; render(); save();
+    };
+  }
+  const sg = $("signBox"); if (sg){
+    const d = signToday();
+    sg.innerHTML = `<div class="mulbar"><span>每日签到 ${S.sign.n?`已连签 ${S.sign.n} 天（七日赠灵晶）`:"修行路远，日日为功"}</span>
+      <button class="mini talok" id="signBtn" ${d?"":"disabled"}>${d?"今日签到":"今日已签"}</button></div>`;
+    const sb = sg.querySelector("#signBtn"); if (sb && d) sb.onclick = doSign;
+  }
+  const lb = $("lifeBox"); if (lb){
+    const seclLeft = S.secl.until > Date.now() ? (S.secl.until-Date.now())/1000 : 0;
+    const cost = Math.round(150*Math.pow(3.2, S.realm)*priceMul()*(1+S.realm*0.5));
+    lb.innerHTML = `<div class="mulbar"><span>${S.realm>=10 ? "🧊 仙体不朽 · 与天地同寿（渡劫失败不损寿元）" : `寿元 <b>${fmt(Math.floor(S.life))}</b> 年（渡劫失败折寿10年，延寿丹可补）`}</span>
+      <button class="mini" data-a="secl" ${seclLeft>0?"disabled":""}>${seclLeft>0?`闭关中 ×3 · 余${mmss(seclLeft)}`:`闭关悟道 30分（${fmt(cost)}灵石）`}</button></div>`;
+    const sbt = lb.querySelector('[data-a="secl"]');
+    if (sbt && seclLeft<=0) sbt.onclick = doSecl;
+  }
+  const tl = $("tribLog"); if (tl) tl.innerHTML = tribLog.slice(0,5).map(l=>`<div class="logline">${l}</div>`).join("");
+  const xyb = $("xyShop"); if (xyb){
+    if (S.xy<=0 && S.ascend===0){ xyb.innerHTML = `<div class="hint">飞升后携仙缘转世，可在此修仙家神通（永久生效，轮回不灭）</div>`; }
+    else {
+      xyb.innerHTML = `<div class="mulbar"><span>仙缘 <b>${S.xy}</b> 点 · 第 ${S.ascend||"未"}${S.ascend?"世":""}</span></div>`;
+      ASCUP.forEach(u=>{
+        const lv = S.xyUp[u.id]||0, full = lv>=u.max, cost = u.cost(lv);
+        const div = document.createElement("div");
+        div.className = "row click"+(!full&&S.xy>=cost?"":" locked cant");
+        div.innerHTML = rowHTML(`${u.nm} Lv.${lv}/${u.max}`, `${u.ds} · 升级需 ${cost} 仙缘`,
+          `<div class="cost">${full?"已圆满":"升级"}</div>`);
+        if (!full && S.xy>=cost) div.onclick = ()=>{
+          S.xy-=cost; S.xyUp[u.id]=lv+1;
+          toast(`${u.nm} 修至 ${(lv+1)} 级`); dirty=true; render(); save();
+        };
+        xyb.appendChild(div);
+      });
+    }
+  }
+  const pb3 = $("pathBox"); if (pb3){
+    if (S.path<0){
+      pb3.innerHTML = `<div class="hint">道途千万，先择一门。此选关乎终生（飞升保留），重修需散功重来。</div>`;
+      PATHS.forEach(pth=>{
+        const div = document.createElement("div");
+        div.className = "row click";
+        div.innerHTML = rowHTML(`【择道】${pth.nm}`, pth.ds, `<div class="cost">入 门</div>`);
+        div.onclick = ()=>{
+          S.path = pth.id;
+          toast(`入道 ${pth.nm}！${pth.fx==="rps"?"灵气产出 ×1.5":"四维属性 ×1.5"}`);
+          dirty=true; render(); save();
+        };
+        pb3.appendChild(div);
+      });
+    } else {
+      const pth = PATHS[S.path];
+      const reCost = Math.round(100*Math.pow(2,S.realm)*(1+S.realm));
+      pb3.innerHTML = `<div class="mulbar"><span>当前道途：<b>${pth.nm}</b> · ${pth.ds}</span>
+        <button class="mini gray" id="pathRe">${S.path===0?"转修体修":"转修法修"}（散功 ${fmt(reCost)} 灵气，产出减半 30 分钟）</button></div>`;
+      const rb = pb3.querySelector("#pathRe");
+      if (rb) rb.onclick = ()=>{
+        if (S.stones < reCost){ toast("灵石不足"); return; }
+        S.stones -= reCost;
+        S.path = 1 - S.path;
+        const until = Date.now()+30*60000;
+        S.qi = Math.round(S.qi*0.5);
+        toast(`散功重修！转投 ${PATHS[S.path].nm}，当前修为折半`);
+        dirty=true; render(); save();
+      };
+    }
+  }
+  const shop = $("shop"); shop.innerHTML = "";
+  // 已修功法 → 参悟行
+  CLICKS.forEach((cl,i)=>{
+    if (!S.clicks[i]) return;
+    const lv = S.refine[i]||0, full = lv>=5;
+    const cost = Math.round(cl.cost*0.4*Math.pow(2,lv));
+    const m2 = 1+0.25*lv;
+    const div = document.createElement("div");
+    div.className = "row click"+(!full&&S.qi>=cost?"":" locked cant");
+    div.innerHTML = rowHTML(`${cl.nm}<span class="tag">${cl.grade}</span>`,
+      `参悟 Lv.${lv}/5 · 吐纳+${fmt(cl.add*refMul(i)*realmMul())} 攻+${fmt(cl.gatk*refMul(i)*realmMul())} 防+${fmt(cl.gdef*refMul(i)*realmMul())}`,
+      `<div class="cost">${full?"大圆满":`参悟（${fmt(cost)} 灵气）`}</div>`);
+    if (!full && S.qi>=cost) div.onclick = ()=>{
+      S.qi -= cost; S.refine[i] = lv+1;
+      toast(`${cl.nm} 参悟至 ${(lv+1)} 层（效果 +25%）`);
+      dirty=true; render(); save();
+    };
+    shop.appendChild(div);
+  });
+  SHOPS.forEach((b,i)=>{
+    const lk = Math.floor(i/2);                 // 每个大境界解锁 2 个
+    const un = S.realm >= lk;
+    const pk = WORLD_PEAK[worldOf(lk)];
+    const capped = un && S.realm < pk;          // 未达本界巅峰：限购 3 级
+    const left = capLeft(i);
+    const isMax = S.mul==="max";
+    const m = isMax ? maxBuy(i) : null;
+    const c = isMax ? (m.k>0?m.c:oneCost(i)) : batchCost(i);
+    const ok = un && (capped ? (isMax ? m.k>0 : (left>0 && S.qi>=c)) : (isMax ? m.k>0 : S.qi>=c));
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked"+(un?"":" cant"));
+    const tip = isMax ? (m.k>0?`（+${m.k} 级）`:"（灵气不足）") : (S.mul>1?`（×${S.mul}）`:"");
+    div.innerHTML = rowHTML(`${b.nm} ×${S.owned[i]}`,
+      `每座 每10秒 +${fmt(b.rate*realmMul())} · 合计 每10秒 +${fmt(b.rate*S.owned[i]*realmMul())}`,
+      !un ? `<div class="cost">需 ${REALMS[lk]}解锁</div><div class="own">🔒</div>`
+      : capped && left<=0 ? `<div class="cost">已达限购 3 级（${SHORT[pk]}期解禁）</div><div class="own">🔒</div>`
+      : `<div class="cost">${fmt(c)} 灵气${tip}</div><div class="own">${capped?("已有 "+S.owned[i]+"/3"):(S.owned[i]?"已有 "+S.owned[i]:"未习得")}</div>`);
+    if (ok) div.onclick = ()=>{
+      if (isMax){ S.qi-=m.c; S.owned[i]+=m.k; toast(`倾囊习得 ${b.nm} ×${m.k}，每10秒 +${fmt(b.rate*m.k*realmMul())}`); }
+      else { S.qi-=c; S.owned[i]+=S.mul; toast(`习得 ${b.nm} ×${S.mul}，每10秒 +${fmt(b.rate*S.mul*realmMul())}`); }
+      dirty=true; render(); save();
+    };
+    shop.appendChild(div);
+  });
+  CLICKS.forEach((cl,i)=>{
+    if (S.clicks[i]>0 || (i>0&&S.clicks[i-1]===0)) return;
+    const ok = S.qi>=cl.cost;
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`${cl.nm}<span class="tag">${cl.grade}</span>`,
+      `吐纳额外 +${fmt(cl.add*realmMul())} · 攻+${fmt(cl.gatk*realmMul())} 防+${fmt(cl.gdef*realmMul())} 速+${cl.gspd} 血+${fmt(cl.ghp*realmMul())}`,
+      `<div class="cost">${fmt(cl.cost)} 灵气</div><div class="own">${S.clicks[i]?"已修":"可修"}</div>`);
+    if (ok) div.onclick = ()=>{ S.qi-=cl.cost; S.clicks[i]++; toast(`修成 ${cl.nm}，四维精进`); dirty=true; render(); save(); };
+    shop.appendChild(div);
+  });
+}
+
+function renderMarket(){
+  const ex = $("exchange");
+  const prevQty = {};   // 自动重绘不打断输入：回收旧值回填
+  if (ex) ex.querySelectorAll("input.exn").forEach(i=>{ if (i.value) prevQty[i.dataset.ex] = i.value; });
+  if (ex) ex.innerHTML = "";
+  EX.forEach((x,ei)=>{
+    const ok = x.max() >= 1;
+    const div = document.createElement("div");
+    div.className = "row"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(x.nm, `${x.rate} · 可兑换 ${fmt(x.max())} 次`,
+      `<div class="cost" style="display:flex;align-items:center;gap:6px">
+        <input type="number" min="1" value="${prevQty[ei]||1}" class="exn" data-ex="${ei}" style="width:60px;padding:2px 4px;border:1px solid rgba(128,128,128,.45);border-radius:6px;background:transparent;color:inherit;font:inherit">
+        <button class="mini" data-exmax="${ei}" style="white-space:nowrap">最大</button>
+        <button class="mini" data-exgo="${ei}" ${ok?"":"disabled"} style="white-space:nowrap">兑换</button>
+      </div>`);
+    ex.appendChild(div);
+  });
+  ex.querySelectorAll("button[data-exmax]").forEach(btn=>{
+    btn.onclick = e => { e.stopPropagation(); const ei=+btn.dataset.exmax; const inp=ex.querySelector(`input.exn[data-ex="${ei}"]`); if(inp) inp.value = Math.max(1, EX[ei].max()); };
+  });
+  ex.querySelectorAll("button[data-exgo]").forEach(btn=>{
+    btn.onclick = e => { e.stopPropagation(); const ei=+btn.dataset.exgo, x=EX[ei];
+      const inp = ex.querySelector(`input.exn[data-ex="${ei}"]`);
+      let n = Math.max(1, Math.floor(+((inp&&inp.value)||1)));
+      const mx = x.max();
+      if (mx < 1) return;
+      if (n > mx){ n = mx; if (inp) inp.value = n; toast("资源不足，已按最大可兑换次数执行"); }
+      x.do(n); toast(`${x.nm} ×${n} 成功`); dirty=true; render(); save(); };
+  });
+  const ss = $("seedShop"); ss.innerHTML = "";
+  const city = CITIES[S.city];
+  const seedDisc = city.seed, cubDisc = city.cub;
+  const mhead = $("marketHead"); if (mhead) mhead.innerHTML = `<div class="mulbar"><span>当前所在：<b>${city.nm}</b> · 种子价×${city.seed} 幼崽价×${city.cub} · <a class="jump" data-a="map">去舆图迁居</a></span></div>`;
+  const jw = mhead && mhead.querySelector('[data-a="map"]'); if (jw) jw.onclick = ()=>switchTab("map");
+  HERBS.filter(h=>Math.abs(h.r-S.realm)<=1).forEach(h=>{
+    const sc = Math.max(1, Math.floor(h.seedCost*priceMul()*seedDisc));
+    const ok = S.qi>=sc;
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`${h.nm}种子<span class="tag">${SHORT[h.r]}</span>`,
+      `${mmss(h.grow)}成熟 · 收${h.yieldN}株 · 每第3次采收赠种`,
+      `<div class="cost">${fmt(sc)} 灵气</div><div class="own">持有 ${S.seeds[h.nm]||0}</div>`);
+    if (ok) div.onclick = ()=>{ S.qi-=sc; S.seeds[h.nm]=(S.seeds[h.nm]||0)+1; toast(`${city.nm} 买得 ${h.nm}种子`); dirty=true; render(); save(); };
+    ss.appendChild(div);
+  });
+  const cs = $("cubShop"); cs.innerHTML = "";
+  BEASTS.filter(b=>Math.abs(b.r-S.realm)<=1).forEach(b=>{
+    const ok = S.stones>=cubCost(b);
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`${b.sp}幼崽<span class="tag">${SHORT[b.r]}·${["攻","速","防"][b.role]}</span>`,
+      `成年${mmss(b.grow)} · 出战攻+${fmt(b.atk)} 防+${fmt(b.def)} 速+${b.spd} 血+${fmt(b.hp)} · 可繁育可宰杀`,
+      `<div class="cost">${fmt(cubCost(b))} 灵石（含行情）</div><div class="own">栏中 ${S.beasts.filter(x=>x.sp===b.sp).length}</div>`);
+    if (ok) div.onclick = ()=>{
+      if (S.beasts.length>=penCap()){ toast("兽栏已满，先宰杀或等繁育腾位"); return; }
+      S.stones-=cubCost(b); S.beasts.push({sp:b.sp, at:Date.now()}); toast(`购得 ${b.sp}幼崽`);
+      dirty=true; render(); save();
+    };
+    cs.appendChild(div);
+  });
+  const sp = $("specShop"); sp.innerHTML = "";
+  const spk = city.spec;
+  if (spk.kind==="pill"){
+    const pk = PILL_KINDS.find(p=>p.k===spk.k), pv = PILL_VAL[spk.k];
+    const eff = pk.k==="rps" ? "+8%产出" : `${pk.u}+${fmt(Math.round(pv.u*Math.pow(pv.b,spk.r)))}`;
+    const capped = (S.pillCount[spk.k]||0)+spk.qty > tcap();
+    const spCost = Math.round(spk.stones*priceMul());
+    const ok = S.stones>=spCost && !capped;
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`【${city.nm}特产】${(spk.r===0?"":SHORT[spk.r]+"·")+pk.nm}×${spk.qty}`,
+      `本城独有丹药 · 每颗${eff} · 耐药 ${S.pillCount[spk.k]||0}/${tcap()}`,
+      `<div class="cost">${fmt(spCost)} 灵石</div>`);
+    if (ok) div.onclick = ()=>{
+      S.stones-=spCost; S.pillCount[spk.k]=(S.pillCount[spk.k]||0)+spk.qty;
+      if (spk.k==="rps") S.rpsPct = Math.min(10, S.rpsPct+0.08*spk.qty); else S.pillU[spk.k]+=spk.qty;
+      toast(`购入特产丹药×${spk.qty}`); dirty=true; render(); save();
+    };
+    sp.appendChild(div);
+  } else if (spk.kind==="cub"){
+    const bd = beastOf(BEAST_NAMES[spk.r][spk.role]);
+    const spCost = Math.round(spk.stones*priceMul());
+    const ok = S.stones>=spCost && S.beasts.length<penCap();
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`【${city.nm}特产】${bd.sp}幼崽`,
+      `本城独家幼崽 · 出战攻+${fmt(Math.round(bd.atk))} 防+${fmt(Math.round(bd.def))}`,
+      `<div class="cost">${fmt(spCost)} 灵石</div>`);
+    if (ok) div.onclick = ()=>{
+      S.stones-=spCost; S.beasts.push({sp:bd.sp, at:Date.now()});
+      toast(`购得特产 ${bd.sp}幼崽`); dirty=true; render(); save();
+    };
+    sp.appendChild(div);
+  } else {
+    const spCost = Math.round(spk.crystals*priceMul());
+    const ok = S.crystals>=spCost;
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`【${city.nm}特产】法宝「${TREAS_NAMES[spk.r]}」`,
+      `本城秘宝 · ${SHORT[spk.r]}品法宝，购入即装备`,
+      `<div class="cost">${fmt(spCost)} 灵晶</div>`);
+    if (ok) div.onclick = ()=>{
+      S.crystals-=spCost; S.eq.t = TREAS_NAMES[spk.r];
+      toast(`炼化秘宝「${TREAS_NAMES[spk.r]}」`); dirty=true; render(); save();
+    };
+    sp.appendChild(div);
+  }
+  const sl = $("sellShop"); sl.innerHTML = "";
+  const goods = [];
+  HERBS.forEach(h=>{ if ((S.inv[h.nm]||0)>0) goods.push({nm:h.nm, n:S.inv[h.nm], v:Math.floor(h.sellStone*priceMul()), tag:SHORT[h.r]}); });
+  Object.keys(MATS).forEach(m=>{ if ((S.inv[m]||0)>0) goods.push({nm:m, n:S.inv[m], v:MATS[m], tag:"材料"}); });
+  if (!goods.length){ sl.innerHTML = `<div class="row locked">${rowHTML("囊中空空","采收灵草、秘境拾荒后再来","")}</div>`; return; }
+  goods.forEach(g=>{
+    const div = document.createElement("div");
+    div.className = "row click";
+    div.innerHTML = rowHTML(`${g.nm}<span class="tag">${g.tag}</span> ×${g.n}`,
+      `单价 ${g.v} 灵石`, `<div class="cost">全卖 ${fmt(g.v*g.n)} 灵石</div>`);
+    div.onclick = ()=>{ S.stones += g.v*g.n; S.inv[g.nm]=0; toast(`售出 ${g.nm}×${g.n}，得 ${fmt(g.v*g.n)} 灵石`); dirty=true; render(); save(); };
+    sl.appendChild(div);
+  });
+}
+
+// ── 拍卖行（每5分钟一档，确定性供货）──
+function auctSlot(){ return Math.floor(Date.now()/300000); }
+function auctStock(){
+  const slot = auctSlot();
+  if (!S.auct || S.auct.slot!==slot) S.auct = {slot, bought:{}};
+  const R = Math.min(S.realm, 13);
+  const rnd = mulberry32(slot*7919 + R*131 + 17);
+  const hs = HERBS.filter(h=>h.r===R);
+  const pillKind = PILL_KINDS[Math.floor(rnd()*PILL_KINDS.length)];
+  const offers = [
+    {kind:"pill", pk:pillKind.k, nm:(R===0?"":SHORT[R]+"·")+pillKind.nm, ds:`丹药×5 · 每颗${pillKind.u==="产"?"+8%产出":"永久"+pillKind.u+"加成"}（${SHORT[R]}品）`,
+     cur:"stones", price: Math.floor(12*Math.pow(2,R)*(1-tval("luck")/100))},
+    {kind:"treasure", nm:TREAS_NAMES[R], ds:`法宝（${SHORT[R]}品）· 攻防速血全面提升，直接装备`,
+     cur:"crystals", price: 2+R},
+    {kind:"cub", nm:BEAST_NAMES[Math.min(R+1,13)][Math.floor(rnd()*3)]+"幼崽", ds:`高一境界妖兽 · 提前入手强伙伴`,
+     cur:"stones", price: Math.floor(28*Math.pow(2.4,R)*(1-tval("luck")/100))},
+    {kind:"seeds", nm:hs[Math.floor(rnd()*3)].nm+"种子×10", ds:`${SHORT[R]}品药材种子一批`,
+     cur:"stones", price: Math.floor(14*Math.pow(2,R)*(1-tval("luck")/100))},
+  ];
+  if (slot%3===0) offers.push({kind:"essence", nm:"仙元石×1", ds:"仙家至宝 · 极稀有", cur:"crystals", price:120});
+  { // 功法拍卖：60% 中品 / 40% 上品（几率随机），境界或有高一境的
+    const gq = rnd()<0.6?1:2;
+    const gr = Math.min(13, R + (rnd()<0.35?1:0));
+    const gc = GF.map((g,i)=>i).filter(i=>GF[i].r===gr && GF[i].q===gq);
+    const gi = gc[Math.floor(rnd()*gc.length)];
+    offers.push({kind:"gongfa", gi, nm:`${GF_Q[gq].nm}功法「${GF[gi].nm}」`,
+      ds:`${SHORT[gr]}境功法 · 修炼后攻防血+${Math.round(GF_Q[gq].attr*100)}%`, cur:"stones",
+      price: Math.max(50, Math.floor(gfPrice(gr,gq)/60))});
+  }
+  return offers;
+}
+function renderAuction(){
+  const slot = auctSlot();
+  $("auctHint").textContent = `拍卖品每 5 分钟换一批（当前批次 #${slot%100000}），灵石/灵晶计价`;
+  const list = $("auctList"); list.innerHTML = "";
+  auctStock().forEach((o,i)=>{
+    const bought = S.auct.bought[i];
+    const curName = o.cur==="stones"?"灵石":"灵晶";
+    const ok = !bought && S[o.cur]>=o.price;
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(o.nm, o.ds,
+      `<div class="cost">${bought?"已购得":fmt(o.price)+" "+curName}</div>`);
+    if (ok) div.onclick = ()=>{
+      S[o.cur]-=o.price; S.auct.bought[i]=true;
+      if (o.kind==="pill"){
+        const kk = o.pk || (o.nm.includes("力道")?"atk":o.nm.includes("铁骨")?"def":o.nm.includes("疾风")?"spd":o.nm.includes("血气")?"hp":"rps");
+        if ((S.pillCount[kk]||0)+5 > tcap()){ toast("耐药将满，此批丹药服不下"); return; }es("聚气丹");
+        if (isRps) S.rpsPct = Math.min(10, S.rpsPct+0.4);
+        else { const kk = o.nm.includes("力道")?"atk":o.nm.includes("铁骨")?"def":o.nm.includes("疾风")?"spd":"hp";
+          S.pillU[kk]+=5; }
+        toast(`服下丹药×5：${o.nm}`);
+      } else if (o.kind==="treasure"){
+        S.eq.t = o.nm; toast(`炼化法宝「${o.nm}」！`);
+      } else if (o.kind==="gongfa"){
+        S.gfOwned[o.gi] = true; if (S.gfMain < 0) S.gfMain = o.gi;
+        toast(`拍得${GF_Q[GF[o.gi].q].nm}功法「${GF[o.gi].nm}」！`);
+      } else if (o.kind==="cub"){
+        if (S.beasts.length>=penCap()){ toast("兽栏已满！钱已付，幼崽暂无法入栏"); return; }
+        S.beasts.push({sp:o.nm.replace("幼崽",""), at:Date.now()}); toast(`拍得 ${o.nm}！`);
+      } else if (o.kind==="seeds"){
+        const nm = o.nm.replace("种子×10","");
+        S.seeds[nm]=(S.seeds[nm]||0)+10; toast(`购得 ${o.nm}`);
+      } else if (o.kind==="essence"){
+        S.essence += 1; toast("购得 仙元石×1");
+      }
+      dirty=true; render(); save();
+    };
+    list.appendChild(div);
+  });
+  const cb = $("consignBox"); cb.innerHTML = "";
+  const herbVal = HERBS.reduce((a,h)=>a+(S.inv[h.nm]||0)*Math.floor(h.sellStone*priceMul()), 0);
+  const matVal = Object.keys(MATS).reduce((a,m)=>a+(S.inv[m]||0)*MATS[m], 0);
+  const total = Math.round((herbVal+matVal)*1.2);
+  if (S.consign){
+    const left = (S.consign.slot+1)*300000 - Date.now();
+    cb.innerHTML = `<div class="row locked">${rowHTML("寄售中", `已寄出货物，下个时段到账 ${fmt(S.consign.stones)} 灵石（${mmss(left/1000)}后）`, "")}</div>`;
+  } else if (total>0){
+    const div = document.createElement("div");
+    div.className = "row click";
+    div.innerHTML = rowHTML("寄售全部药材与材料", `按市价 1.2 倍出售，下个拍卖时段到账（现值约 ${fmt(total)} 灵石）`,
+      `<div class="cost">寄售 → ${fmt(total)} 灵石</div>`);
+    div.onclick = ()=>{
+      S.consign = {slot, stones: total};
+      HERBS.forEach(h=>S.inv[h.nm]=0);
+      Object.keys(MATS).forEach(m=>S.inv[m]=0);
+      toast("货物已寄出，下个时段到账");
+      dirty=true; render(); save();
+    };
+    cb.appendChild(div);
+  } else {
+    cb.innerHTML = `<div class="row locked">${rowHTML("暂无可寄售之物","采收灵草、秘境拾荒后再来","")}</div>`;
+  }
+}
+
+let battleBusy = false, battleBusyAt = 0;
+const busyStuck = () => battleBusy && Date.now()-battleBusyAt > 45000;
+let curFight = null;   // {zi, n} 战报跟随
+function battleAnim(card, zi, n, onDone){
+  const sim = simBattle(enemyOf(zi, n));
+  const bar = card.querySelector('.bbar i');
+  const dur = Math.max(1500, Math.min(sim.round*1500, 30000));
+  if (bar){ bar.style.transition = `width ${dur}ms linear`; bar.style.width = "100%"; }
+  battleBusy = true; battleBusyAt = Date.now();
+  let lg0 = $("zones") && $("zones").querySelector(".log");
+  if (!lg0 && $("zones")){
+    lg0 = document.createElement("div");
+    lg0.className = "log";
+    $("zones").appendChild(lg0);
+  }
+  if (lg0){
+    lg0.innerHTML = "";
+    const live = document.createElement("div");
+    live.className = "live";
+    live.textContent = `⚔️ 正在挑战【${ZONES[zi].nm}·第${n}关】${enemyOf(zi,n).nm} · ${sim.pFirst?"我先手":enemyOf(zi,n).nm+"先手"}${sim.pExtra?" · 我连击":""}${sim.eExtra?" · 敌连击":""}`;
+    lg0.appendChild(live);
+    const flow = document.createElement("div");
+    flow.className = "liveflow";
+    lg0.appendChild(flow);
+    // 逐击实时战报：按轮流出伤害
+    const pDmg = sim.pd*(sim.pExtra?2:1), eDmg = sim.ed*(sim.eExtra?2:1);
+    let ehp = enemyOf(zi,n).hp, php = pstat().hp, k = 0;
+    const stepMs = Math.max(120, Math.min(1500, dur/sim.round));
+    let tmr = null;
+    const tick = ()=>{
+      k++;
+      let mine = 0, theirs = 0;
+      if (sim.pFirst){ mine = pDmg; ehp -= mine; if (ehp<=0 || k>=sim.round){ end(); return; } theirs = eDmg; php -= theirs; }
+      else { theirs = eDmg; php -= theirs; if (php<=0 || k>=sim.round){ end(); return; } mine = pDmg; ehp -= mine; }
+      const row = document.createElement("div");
+      row.innerHTML = `第${k}轮 · 我击 <b class="good">-${fmt(mine)}</b>${sim.pExtra?"(连击)":""} ｜ ${enemyOf(zi,n).nm}击 <b class="bad">-${fmt(theirs)}</b>${sim.eExtra?"(连击)":""}`;
+      flow.appendChild(row);
+      while (flow.children.length>4) flow.removeChild(flow.firstChild);
+      if (k>=sim.round) end();
+    };
+    tmr = setInterval(tick, stepMs);
+    function end(){
+      if (tmr) clearInterval(tmr);
+      const fin = document.createElement("div");
+      fin.innerHTML = `<b>${sim.win?"✅ 斩杀！":"❌ 不敌"}</b> · 共${sim.round}轮`;
+      flow.appendChild(fin);
+      setTimeout(()=>{ battleBusy = false; curFight = null; onDone(); }, 600);
+    }
+    return;
+  }
+  setTimeout(()=>{ battleBusy = false; curFight = null; onDone(); }, dur);
+}
+function renderZones(){
+  const box = $("zones"); box.innerHTML = "";
+  const W = worldOf(S.realm);
+  // ═══ 战斗态：身处某秘境 ═══
+  if (S.inZone != null){
+    const zi = S.inZone, z = ZONES[zi], prog = S.zprog[zi];
+    $("zoneHead").innerHTML = `<div class="mulbar"><span>📍 所在秘境：<b>${z.nm}</b> · 已胜 ${prog}/100 · 1.5 秒/击
+      <button class="mini" data-a="zloop" style="margin-left:8px">${S.zloop?"🔁 循环战斗：开":"🔁 循环战斗：关"}</button>
+      <button class="mini gray" data-a="zexit">↩ 退出秘境</button></span></div>`;
+    const zlb = $("zoneHead").querySelector('[data-a="zloop"]');
+    if (zlb) zlb.onclick = ()=>{ S.zloop = !S.zloop; toast(S.zloop?"循环战斗已开启：通关后反复讨伐第100关首领":"循环战斗已关闭"); dirty=true; renderZones(); save(); };
+    const xe = $("zoneHead").querySelector('[data-a="zexit"]');
+    if (xe) xe.onclick = ()=>{
+      if (battleBusy){ toast("战斗进行中，无法退出（约剩 "+Math.ceil((battleBusyAt+30000-Date.now())/1000)+" 秒）"); return; }
+      S.inZone = null; toast("已退出【"+z.nm+"】"); dirty=true; renderZones(); save();
+    };
+    const next = prog<100 ? enemyOf(zi, prog+1) : enemyOf(zi, 100);
+    const card = document.createElement("div");
+    card.className = "zonecard";
+    card.innerHTML =
+      `<h3>${z.nm}<span class="tag">${REALMS[z.base]}${z.base<13&&(ZONES[zi+1]||{}).base===z.base?`~${REALMS[z.base+1]}`:""}</span></h3>`+
+      `<div class="pbar"><i style="width:${prog}%"></i></div>`+
+      `<div class="bbar"><i style="width:0%"></i></div>`+
+      (prog<100
+        ? `<div class="enemy"><div><b>${next.boss?"首领 · ":""}${next.nm}</b><br><span class="es">攻<b>${fmt(next.atk)}</b> 防<b>${fmt(next.def)}</b> 速<b>${next.spd}</b> 血<b>${fmt(next.hp)}</b></span></div>
+           <div><button class="mini" data-a="fight">挑 战（约 ${Math.round(simRounds(zi,prog+1)*1.5)} 秒）</button><button class="mini gray" data-a="auto">连 战</button></div></div>`
+        : `<div class="enemy"><div><b>百敌尽伏 · 循环讨伐</b><br><span class="es">镇关首领 ${next.nm}：攻<b>${fmt(next.atk)}</b> 血<b>${fmt(next.hp)}</b></span></div>
+           <div><button class="mini gray" data-a="auto">再扫一遍</button><button class="mini gray" data-a="reset">重探归零</button></div></div>`);
+    const fb = card.querySelector('[data-a="fight"]');
+    if (fb) fb.onclick = ()=>{
+      if (S.secl && S.secl.until > Date.now()){ toast("闭关悟道中，心无旁骛，不宜厮杀"); return; }
+      curFight = {zi, n: S.zprog[zi]+1};
+      if (busyStuck()){ battleBusy = false; }
+      if (battleBusy){ toast(`战斗进行中…（约剩 ${Math.ceil((battleBusyAt+30000-Date.now())/1000)} 秒）`); return; }
+      const eF = enemyOf(zi, S.zprog[zi]+1);
+      if (Math.max(1, atk()-eF.def)*100 < eF.hp){ toast("此敌当前打不动（百回合内破不了防），先提升攻防"); return; }
+      battleAnim(card, zi, S.zprog[zi]+1, ()=>{ const b = fight(zi); if (b) toast(b.win?"胜！推进一关":"不敌，需提升修为"); });
+    };
+    const ab = card.querySelector('[data-a="auto"]');
+    if (ab) ab.onclick = ()=>{
+      if (S.secl && S.secl.until > Date.now()){ toast("闭关悟道中，心无旁骛，不宜厮杀"); return; }
+      if (busyStuck()){ battleBusy = false; }
+      if (battleBusy){ toast(`连战进行中…（约剩 ${Math.ceil((battleBusyAt+30000-Date.now())/1000)} 秒）`); return; }
+      if (S.zprog[zi]>=100){ S.zprog[zi]=0; toast("重探此境，从第 1 敌再战"); }
+      curFight = {zi, n: S.zprog[zi]+1};
+      autoFight(zi, card);
+    };
+    const rs = card.querySelector('[data-a="reset"]');
+    if (rs) rs.onclick = ()=>{ S.zprog[zi]=0; S.zoneLog=[]; toast("此境进度已归零"); dirty=true; renderZones(); save(); };
+    box.appendChild(card);
+    // 战斗流程区
+    const lg = document.createElement("div");
+    lg.className = "log";
+    const live = (battleBusy && curFight) ? `<div class="live">⚔️ 正在挑战【${ZONES[curFight.zi].nm}·第${curFight.n}关】${enemyOf(curFight.zi,curFight.n).nm} · 战斗中…</div>` : "";
+    lg.innerHTML = `<div class="mulbar"><span>战斗流程（最近 12 条）</span></div>` + live +
+      ((S.zoneLog||[]).length ? (S.zoneLog||[]).map(l=>`<div>${l}</div>`).join("") : `<div class="hint">尚无战况——点【挑战】或【连战】开始</div>`) +
+      (log.length ? `<div class="hint">——机缘记录——</div>`+log.slice(0,5).map(l=>`<div>${l}</div>`).join("") : "");
+    box.appendChild(lg);
+    return;
+  }
+  // ═══ 选择态：地点列表 ═══
+  $("zoneHead").innerHTML = `<div class="mulbar"><span>当前所在：<b>${WORLDS[W].nm}</b> · 点击地点进入秘境 · 每次交锋耗时 1.5 秒/击</span></div>`;
+  ZONES.forEach((z,zi)=>{
+    if (z.world !== W) return;
+    const locked = S.realm < z.base;
+    const prog = S.zprog[zi];
+    const card = document.createElement("div");
+    card.className = "zonecard";
+    if (locked){
+      card.innerHTML = `<h3>${z.nm}<span class="tag">未解锁</span></h3><div class="zds">需 ${REALMS[z.base]} 方可踏入</div>`;
+      card.style.opacity = .55;
+    } else {
+      const next = prog<100 ? enemyOf(zi, prog+1) : null;
+      card.innerHTML =
+        `<h3>${z.nm}<span class="tag">${REALMS[z.base]}${z.base<13&&(ZONES[zi+1]||{}).base===z.base?`~${REALMS[z.base+1]}`:""}</span></h3>`+
+        `<div class="zds">已胜 ${prog}/100${prog===100?" · 境内已清空":""} · 下一位敌人：${next?next.nm:"镇关首领"}</div>`+
+        `<div class="pbar"><i style="width:${prog}%"></i></div>`+
+        `<div class="hint">点击进入此秘境</div>`;
+      card.style.cursor = "pointer";
+      card.onclick = ()=>{ S.inZone = zi; S.zoneLog = S.zoneLog||[]; toast("踏入【"+z.nm+"】"); dirty=true; renderZones(); save(); };
+    }
+    box.appendChild(card);
+  });
+}
+
+function renderField(){
+  const head = $("fieldHead"); head.innerHTML = "";
+  const bt = $("bottleBox"); bt.innerHTML = "";
+  const bb = document.createElement("div");
+  bb.className = "mulbar bottle";
+  const gains = Math.floor((Date.now()-S.bottle.last)/3600000);
+  if (S.bottle.charge<10 && gains>0){ S.bottle.charge=Math.min(10,S.bottle.charge+gains); S.bottle.last += gains*3600000; if (S.bottle.charge>=10) S.bottle.last=Date.now(); }
+  const flowLeft = S.flow && S.flow.until>Date.now() ? (S.flow.until-Date.now())/1000 : 0;
+  bb.innerHTML = `<span>小绿瓶 蓄能 ${S.bottle.charge}/10（每小时+1）${flowLeft>0?` · <b class="good">时流×${S.flow.mult} 剩${mmss(flowLeft)}</b>`:""}</span>
+    <button class="mini" data-a="drop" ${S.bottle.charge<1?"disabled":""}>滴灵催熟（耗1格）</button>
+    <button class="mini gray" data-a="f5" ${S.stones<3?"disabled":""}>时流×5 · 2分（3灵石）</button>
+    <button class="mini gray" data-a="f10" ${S.stones<15?"disabled":""}>时流×10 · 2分（15灵石）</button>
+    <button class="mini gray" data-a="f25" ${S.stones<50?"disabled":""}>时流×25 · 2分（50灵石）</button>`;
+  const acc = (mult, cost) => { if (S.stones<cost){ toast("灵石不足"); return; }
+    S.stones -= cost;
+    const base = S.flow && S.flow.until>Date.now() ? S.flow.until : Date.now();
+    S.flow = {until: base + 120000, mult};
+    toast(`小绿瓶开启时流：灵田时间流速 ×${mult}，持续 2 分钟（可叠加续费）`);
+    dirty=true; render(); save(); };
+  const db = bb.querySelector('[data-a="drop"]');
+  if (db) db.onclick = ()=>{
+    const growing = S.plots.map((p,i)=>p?{i,left:herbOf(p.crop).grow*(1-tval("farm")/100)-(Date.now()-p.at)/1000}:null).filter(Boolean).sort((x,y)=>x.left-y.left);
+    if (!growing.length){ toast("没有正在生长的灵田"); return; }
+    S.bottle.charge--; S.plots[growing[0].i].at = 0;
+    toast(`${S.plots[growing[0].i].crop} 得一滴绿灵，瞬时成熟！`);
+    dirty=true; render(); save();
+  };
+  const b5 = bb.querySelector('[data-a="f5"]');   if (b5)   b5.onclick = ()=>acc(5,3);
+  const b30 = bb.querySelector('[data-a="f10"]'); if (b30)  b30.onclick = ()=>acc(10,15);
+  const b120 = bb.querySelector('[data-a="f25"]'); if (b120) b120.onclick = ()=>acc(25,50);
+  bt.appendChild(bb);
+  const bar = document.createElement("div");
+  bar.className = "mulbar";
+  bar.innerHTML = "<span>选中种子</span>";
+  HERBS.filter(h=>Math.abs(h.r-S.realm)<=1).forEach(h=>{
+    const b = document.createElement("button");
+    b.textContent = `${h.nm}×${S.seeds[h.nm]||0}`;
+    if (selSeed===h.nm) b.classList.add("on");
+    b.onclick = ()=>{ selSeed = selSeed===h.nm?null:h.nm; dirty=true; render(); };
+    bar.appendChild(b);
+  });
+  const ex = document.createElement("button");
+  const cost = 500*Math.pow(2, S.plots.length-2);
+  ex.textContent = `开垦新田（${fmt(cost)} 灵气）`;
+  ex.disabled = S.plots.length>=plotsCap() || S.qi<cost;
+  ex.className = "mini"; ex.style.marginLeft = "10px";
+  ex.title = S.plots.length>=plotsCap() ? `本境上限 ${plotsCap()} 块，突破后可再建 8 块` : "";
+  ex.onclick = ()=>{ S.qi-=cost; S.plots.push(null); toast("开垦出一片新灵田"); dirty=true; render(); save(); };
+  bar.appendChild(ex);
+  const batch = document.createElement("div");
+  batch.className = "mulbar";
+  batch.innerHTML = `<button class="mini" data-a="plantAll">一键播种</button>
+    <button class="mini gray" data-a="harvestAll">一键收获</button>
+    <span class="tag">田地 ${S.plots.filter(Boolean).length}/${plotsCap()}</span>`;
+  const pb2 = batch.querySelector('[data-a="plantAll"]');
+  if (pb2) pb2.onclick = ()=>{
+    if (!selSeed || (S.seeds[selSeed]||0)<=0){ toast("先在上方选中要种的种子"); return; }
+    let n = 0;
+    S.plots.forEach((p,i)=>{ if (!p && (S.seeds[selSeed]||0)>0){ S.seeds[selSeed]--; S.plots[i] = {crop:selSeed, at:Date.now()}; n++; } });
+    toast(n?`一键播种 ${selSeed} ×${n}`:"没有空田了"); dirty=true; render(); save();
+  };
+  const hb = batch.querySelector('[data-a="harvestAll"]');
+  if (hb) hb.onclick = ()=>{
+    let n=0, got=0;
+    S.plots.forEach((p,i)=>{
+      if (!p) return;
+      const h = herbOf(p.crop);
+      if (h.grow*(1-tval("farm")/100) - (Date.now()-p.at)/1000 <= 0){
+        const yn = h.yieldN + ((tal("farm")&&tal("farm").tier>=2)?1:0);
+        S.inv[p.crop] = (S.inv[p.crop]||0)+yn; got += yn;
+        const cnt = (S.harvestN[p.crop]||0)+1; S.harvestN[p.crop] = cnt;
+        if (cnt%3===0){ S.seeds[p.crop]=(S.seeds[p.crop]||0)+1; }
+        S.plots[i] = null; n++;
+      }
+    });
+    toast(n?`一键收获 ${n} 块田，入仓 ${got} 株`:"没有成熟的灵草"); dirty=true; render(); save();
+  };
+  bar.appendChild(batch);
+  head.appendChild(bar);
+  const grid = $("plots"); grid.innerHTML = "";
+  S.plots.forEach((p,idx)=>{
+    const div = document.createElement("div");
+    div.className = "plot";
+    if (!p){
+      div.innerHTML = `空田<span class="st">${selSeed&&(S.seeds[selSeed]||0)>0?"点击种植 "+selSeed:"先在上方选中种子"}</span>`;
+      if (selSeed&&(S.seeds[selSeed]||0)>0) div.onclick = ()=>{
+        S.seeds[selSeed]--;
+        S.plots[idx] = {crop:selSeed, at:Date.now()};
+        dirty=true; render(); save();
+      };
+    } else {
+      const h = herbOf(p.crop);
+      const left = h.grow*(1-tval("farm")/100) - (Date.now()-p.at)/1000;
+      if (left<=0){
+        div.classList.add("ready");
+        div.innerHTML = `${p.crop}<span class="st">成熟 · 点击采收</span>`;
+        div.onclick = ()=>{
+          const yn = h.yieldN + ((tal("farm")&&tal("farm").tier>=2)?1:0);
+          S.inv[p.crop] = (S.inv[p.crop]||0)+yn;
+          const cnt = (S.harvestN[p.crop]||0)+1;
+          S.harvestN[p.crop] = cnt;
+          if (cnt%3===0){ S.seeds[p.crop]=(S.seeds[p.crop]||0)+1; toast(`采收 ${p.crop}×${yn}，赠种子×1`); }
+          else toast(`采收 ${p.crop}×${h.yieldN}`);
+          S.plots[idx]=null; dirty=true; render(); save();
+        };
+      } else div.innerHTML = `${p.crop}<span class="st">还需 ${mmss(left)}</span>`;
+    }
+    grid.appendChild(div);
+  });
+}
+
+function renderPen(){
+  const head = $("penHead"); head.innerHTML = "";
+  const bar = document.createElement("div");
+  bar.className = "mulbar";
+  let t = `妖兽 ${S.beasts.length}/${penCap()}`;
+  if (S.partnerSp){ const pp = partner(); t += ` · 出战：${S.partnerSp}（攻+${fmt(pp.atk)} 防+${fmt(pp.def)} 速+${pp.spd} 血+${fmt(pp.hp)}）`; }
+  if (S.breed){ const left = (S.breed.need||180000)/1000-(Date.now()-S.breed.at)/1000;
+    t += ` · ${S.breed.sp}孕育中：${mmss(left)}`; }
+  bar.innerHTML = `<span>${t}</span>`;
+  head.appendChild(bar);
+  const list = $("beasts"); list.innerHTML = "";
+  // 探索收获区（行上方持久显示）
+  if (S.mLog.length){
+    const mb = document.createElement("div");
+    mb.className = "log mlog";
+    mb.innerHTML = `<div class="mlog-t">🎒 探索收获（近 10 次）</div>` + S.mLog.map(r=>
+      `<div class="mlog-row"><span>${r.txt}</span><span class="mlog-t2">${new Date(r.t).toTimeString().slice(0,5)}</span></div>`).join("");
+    list.appendChild(mb);
+  }
+  if (!S.beasts.length){ list.innerHTML = `<div class="row locked">${rowHTML("栏中无兽","坊市购崽、秘境降妖、繁育得崽","")}</div>`; return; }
+  S.beasts.forEach((b,i)=>{
+    const bd = beastOf(b.sp);
+    const grown = Date.now()-b.at >= bd.grow*1000;
+    const div = document.createElement("div");
+    div.className = "row beastrow";
+    div.style.borderLeftColor = ["#b3543f","#3f7f5f","#5a7fb3"][bd.role];
+    if (!grown){
+      div.innerHTML = rowHTML(`${b.sp}幼崽`, `成长中 · 还需 ${mmss(bd.grow-(Date.now()-b.at)/1000)}`,
+        `<div class="own">${SHORT[bd.r]}·${["攻","速","防"][bd.role]}型</div>`);
+    } else {
+      const btns = [];
+      const isP = S.partnerSp===b.sp;
+      btns.push(`<button class="mini" data-a="${isP?"rest":"fight"}">${isP?"歇战":"出战"}</button>`);
+      btns.push(`<button class="mini gray" data-a="slau">宰杀</button>`);
+      if (!S.breed) btns.push(`<button class="mini gray" data-a="breed">繁育</button>`);
+      if (!S.missions.find(m=>m.sp===b.sp)){
+        MDEST.forEach((d,di)=>btns.push(`<button class="mini gray" data-a="mis" data-d="${di}">${d.nm}</button>`));
+      } else {
+        const m = S.missions.find(m2=>m2.sp===b.sp);
+        btns.push(`<span class="tag good">探索中：${MDEST[m.d].nm} · 余${mmss((m.need-(Date.now()-m.at))/1000)}</span>`);
+      }
+      div.innerHTML = rowHTML(`${b.sp}<span class="tag">${SHORT[bd.r]}·${["攻","速","防"][bd.role]}型</span>`,
+        `攻+${fmt(bd.atk)} 防+${fmt(bd.def)} 速+${bd.spd} 血+${fmt(bd.hp)}`, `<div>${btns.join("")}</div>`);
+      const fbtn = div.querySelector('[data-a="fight"]');
+      if (fbtn) fbtn.onclick = ()=>{ S.partnerSp=b.sp; toast(`${b.sp} 出战！`); dirty=true; render(); save(); };
+      const rbtn = div.querySelector('[data-a="rest"]');
+      if (rbtn) rbtn.onclick = ()=>{ S.partnerSp=null; toast(`${b.sp} 回栏休憩`); dirty=true; render(); save(); };
+      div.querySelectorAll('[data-a="mis"]').forEach(mb=>{
+        mb.onclick = ()=>{
+          const di = +mb.getAttribute("data-d"), d = MDEST[di];
+          S.missions.push({sp:b.sp, d:di, at:Date.now(), need:d.sec*1000, r:bd.r, mult:d.mult});
+          toast(`${b.sp} 前往${d.nm}（${mmss(d.sec)}，收益×${d.mult}）`);
+          dirty=true; render(); save();
+        };
+      });
+      div.querySelector('[data-a="slau"]').onclick = ()=>{
+        if (S.partnerSp===b.sp) S.partnerSp=null;
+        S.beasts.splice(i,1);
+        let got = [];
+        Object.keys(bd.mats).forEach(m=>{ const q=ri(bd.mats[m][0],bd.mats[m][1])+Math.floor(bd.r/2);
+          if (q>0){ S.inv[m]=(S.inv[m]||0)+q; got.push(m+"×"+q); } });
+        const st = 2+2*bd.r; S.stones+=st;
+        toast(`宰杀 ${b.sp}：得 ${got.join("、")}、灵石${st}`);
+        dirty=true; render(); save();
+      };
+      const bb = div.querySelector('[data-a="breed"]');
+      if (bb) bb.onclick = ()=>{
+        const pair = S.beasts.filter((x,j)=>j!==i && x.sp===b.sp && Date.now()-x.at>=beastOf(x.sp).grow*1000);
+        if (!pair.length){ toast("需两只同类成年妖兽"); return; }
+        S.breed = {sp:b.sp, at:Date.now(), need: breedSec(b.sp)*1000}; toast(`${b.sp} 开始孕育（${mmss(breedSec(b.sp))}必得崽）`);
+        dirty=true; render(); save();
+      };
+    }
+    list.appendChild(div);
+  });
+}
+
+function renderAlc(){
+  $("alcHead").innerHTML = `<div class="mulbar"><span>炼丹术 Lv.${S.alv} · 成丹必成 · 每级药力 +2% · 耐药上限 ${tcap()} 颗/类</span></div>`;
+  const list = $("pills"); list.innerHTML = "";
+  PILLS.filter(r=>Math.abs(r.r-S.realm)<=1).forEach(r=>{
+    const entries = Object.entries(r.need);
+    const capped = (S.pillCount[r.kind]||0) >= tcap();
+    const ok = entries.every(([k,v])=>(S.inv[k]||0)>=v) && !capped;
+    const need = entries.map(([k,v])=>`${k}×${v}<span class="${(S.inv[k]||0)>=v?"good":"bad"}">(有${S.inv[k]||0})</span>`).join(" ");
+    let eff;
+    const dmul = 1 + tval("dan")/100;
+    if (r.kind==="rps") eff = `+${Math.round(8*dmul)}% 灵气产出`;
+    else { const pv = PILL_VAL[r.kind];
+      eff = `${r.u}+${fmt(Math.round(pv.u*Math.pow(pv.b,S.realm)*(1+0.02*S.alv)*dmul))}`; }
+    const cnt = S.pillCount[r.kind]||0;
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`${r.nm}<span class="tag">${SHORT[r.r]}</span>`,
+      `${eff} · 耐药 ${cnt}/${tcap()}${capped?" <span class='bad'>已满</span>":""} · 需：${need}`,
+      `<div class="cost">${capped?"耐药已满":"炼 制"}</div>`);
+    if (ok) div.onclick = ()=>{
+      entries.forEach(([k,v])=>S.inv[k]-=v);
+      S.alv++; S.pillCount[r.kind] = (S.pillCount[r.kind]||0)+1;
+      if (r.kind==="rps") S.rpsPct = Math.min(10, S.rpsPct+0.08*dmul);
+      else S.pillU[r.kind]++;
+      toast(`丹成入体（耐药 ${S.pillCount[r.kind]}/${tcap()}）：${r.nm} ${eff}`);
+      dirty=true; render(); save();
+    };
+    list.appendChild(div);
+  });
+  LIFE_PILLS.filter(l=>Math.abs(l.r-S.realm)<=1).forEach(l=>{
+    const entries = Object.entries(l.need);
+    const capped = (S.pillCount["life"]||0) >= tcap();
+    const ok = entries.every(([k,v])=>(S.inv[k]||0)>=v) && S.stones>=l.stones*priceMul() && !capped;
+    const need = entries.map(([k,v])=>`${k}×${v}<span class="${(S.inv[k]||0)>=v?"good":"bad"}">(有${S.inv[k]||0})</span>`).join(" ");
+    const div = document.createElement("div");
+    div.className = "row click"+(ok?"":" locked cant");
+    div.innerHTML = rowHTML(`${l.nm}<span class="tag">${SHORT[l.r]}·寿</span>`,
+      `服下寿元 +${l.add} 年 · 耐药 ${S.pillCount["life"]||0}/${tcap()}${capped?" <span class='bad'>已满</span>":""} · 需：${need} ${fmt(Math.round(l.stones*priceMul()))}灵石`,
+      `<div class="cost">${capped?"耐药已满":"炼 制"}</div>`);
+    if (ok) div.onclick = ()=>{
+      entries.forEach(([k,v])=>S.inv[k]-=v);
+      S.stones -= Math.round(l.stones*priceMul()); S.life += l.add;
+      S.pillCount["life"] = (S.pillCount["life"]||0)+1;
+      toast(`丹成入体：寿元 +${l.add} 年（现 ${fmt(S.life)} 年）`);
+      dirty=true; render(); save();
+    };
+    list.appendChild(div);
+  });
+}
+
+function renderSmi(){
+  $("smiHead").innerHTML = `<div class="mulbar"><span>炼器术 Lv.${S.elv} · 每级器身 +2%</span></div>`;
+  const list = $("forge"); list.innerHTML = "";
+  [["武器",WEAPON_NAMES,"w","atk"],["护甲",ARMOR_NAMES,"a","def"],["法宝",TREAS_NAMES,"t","all"]].forEach(([title,names,slot,mode])=>{
+    const curIdx = eqObj(slot);
+    const nextIdx = curIdx+1;
+    const div = document.createElement("div");
+    if (nextIdx > 13){
+      div.className = "row locked";
+      const cur = gear(slot);
+      div.innerHTML = rowHTML(`${title}：${names[13]}`, `已是最上品器物`,
+        `<div class="own">${cur? (mode==="atk"?"攻+"+fmt(cur.atk):mode==="def"?"防+"+fmt(cur.def):`攻+${fmt(cur.atk)} 防+${fmt(cur.def)} 速+${cur.spd} 血+${fmt(cur.hp)}`):""}</div>`);
+    } else if (nextIdx > S.realm){
+      div.className = "row locked";
+      div.innerHTML = rowHTML(`${title}：${curIdx>=0?names[curIdx]+"（现装）":"无"}`,
+        `下一阶「${names[nextIdx]}」需 ${REALMS[nextIdx]} 境界方可驾驭`, "");
+    } else {
+      const cost = gearCost(nextIdx);
+      const ok = (S.inv[cost.mats[0][0]]||0)>=cost.mats[0][1] && (S.inv[cost.mats[1][0]]||0)>=cost.mats[1][1] && S.stones>=cost.stones;
+      const need = `${cost.mats[0][0]}×${cost.mats[0][1]}<span class="${(S.inv[cost.mats[0][0]]||0)>=cost.mats[0][1]?"good":"bad"}">(有${S.inv[cost.mats[0][0]]||0})</span> ${cost.mats[1][0]}×${cost.mats[1][1]}<span class="${(S.inv[cost.mats[1][0]]||0)>=cost.mats[1][1]?"good":"bad"}">(有${S.inv[cost.mats[1][0]]||0})</span> 灵石×${cost.stones}<span class="${S.stones>=cost.stones?"good":"bad"}">(有${fmt(S.stones)})</span>`;
+      const st = gearStats(nextIdx, slot), m = 1+0.02*S.elv;
+      const stTxt = mode==="atk"?`攻+${fmt(Math.round(st.atk*m))}`:mode==="def"?`防+${fmt(Math.round(st.def*m))}`:`攻+${fmt(Math.round(st.atk*m))} 防+${fmt(Math.round(st.def*m))} 速+${st.spd} 血+${fmt(Math.round(st.hp*m))}`;
+      div.className = "row click"+(ok?"":" locked cant");
+      div.innerHTML = rowHTML(`${title}：${curIdx>=0?names[curIdx]+"（现装）":"无"}`,
+        `锻「${names[nextIdx]}」${stTxt} · 需：${need}`, `<div class="cost">锻 造</div>`);
+      if (ok) div.onclick = ()=>{
+        cost.mats.forEach(([mk,mv])=>S.inv[mk]-=mv);
+        S.stones-=cost.stones; S.elv++;
+        S.eq[slot] = names[nextIdx];
+        toast(`器成！${names[nextIdx]}，${stTxt}`);
+        dirty=true; render(); save();
+      };
+    }
+    list.appendChild(div);
+  });
+}
+
+// ═════════ 存档 ═════════
+function save(){
+  S.last = Date.now();
+  try{ localStorage.setItem("xx_idle_save", JSON.stringify(S)); }catch(e){}
+}
+const LEGACY_HERB = {"灵草":"青灵草","灵花":"凝露花","灵果":"聚气果"};
+function load(){
+  let d = null;
+  try{ d = JSON.parse(localStorage.getItem("xx_idle_save")||"null"); }catch(e){}
+  if (!d) { dirty=true; setTimeout(talOpen, 300); return; }
+  S = JSON.parse(JSON.stringify(S));
+  if (d.v>=2){
+    Object.assign(S, d);
+  } else {
+    // v1 迁移
+    S.qi = d.qi||0; S.total = d.total||0; S.realm = Math.min(13, d.realm||0); S.stage = 3;
+    S.owned = (d.owned&&d.owned.length===SHOPS.length)?d.owned:S.owned;
+    S.clicks = (d.clicks&&d.clicks.length===CLICKS.length)?d.clicks:S.clicks;
+    S.mul = d.mul===undefined?1:d.mul; S.alv = d.alv||0; S.elv = d.elv||0;
+    S.rpsPct = (d.pills&&d.pills.rps)||0;
+    S.pillU = {atk:Math.round(((d.pills&&d.pills.atk)||0)/4), def:Math.round(((d.pills&&d.pills.def)||0)/3), spd:0, hp:0};
+    Object.entries(d.inv||{}).forEach(([k,v])=>{ const nk = LEGACY_HERB[k]||k; S.inv[nk]=(S.inv[nk]||0)+v; });
+    Object.entries(d.seeds||{}).forEach(([k,v])=>{ const nk = LEGACY_HERB[k]||k; S.seeds[nk]=(S.seeds[nk]||0)+v; });
+    (d.plots||[]).forEach((p,i)=>{ if(p&&p.crop){ S.plots[i]={crop:LEGACY_HERB[p.crop]||p.crop, at:p.at}; } });
+    S.beasts = (d.beasts||[]).filter(b=>beastOf(b.sp)).map(b=>({sp:b.sp, at:b.at}));
+    if (d.partnerSp && beastOf(d.partnerSp)) S.partnerSp = d.partnerSp;
+    if (d.breed && beastOf(d.breed.sp)) S.breed = d.breed;
+    S.eq.w = WEAPON_NAMES.includes(d.eq&&d.eq.w) ? d.eq.w : null;
+    S.eq.a = ARMOR_NAMES.includes(d.eq&&d.eq.a) ? d.eq.a : null;
+    S.stones = 0; S.crystals = 0; S.essence = 0;
+  }
+  // 兜底清洗
+  S.beasts = (S.beasts||[]).filter(b=>b && beastOf(b.sp));
+  if (S.partnerSp && !beastOf(S.partnerSp)) S.partnerSp = null;
+  if (S.breed && !beastOf(S.breed.sp)) S.breed = null;
+  S.zprog = (S.zprog&&S.zprog.length===7)?S.zprog:[0,0,0,0,0,0,0];
+  S.inv = S.inv||{}; S.seeds = S.seeds||{}; S.harvestN = S.harvestN||{};
+  S.pillU = Object.assign({atk:0,def:0,spd:0,hp:0}, S.pillU||{});
+  S.rpsPct = S.rpsPct||0;
+  S.pillCount = Object.assign({atk:0,def:0,spd:0,hp:0,rps:0}, S.pillCount||{});
+  S.city = S.city||0;
+  S.bottle = (S.bottle && typeof S.bottle.charge==="number") ? S.bottle : {charge:3, last:Date.now()};
+  S.bottle.charge = Math.min(10, Math.max(0, S.bottle.charge));
+  S.tRolls = S.tRolls||0; S.talSel = [];
+  S.kills = S.kills||0; S.tribWins = S.tribWins||0; S.tribFails = S.tribFails||0;
+  S.achv = S.achv||{}; S.missions = Array.isArray(S.missions)?S.missions:[];
+  S.sign = S.sign||{d:"",n:0}; S.ascend = S.ascend||0; S.xy = S.xy||0;
+  S.xyUp = Object.assign({body:0,rps:0,trib:0,stone:0}, S.xyUp||{});
+  S.life = (typeof S.life==="number" && S.life>0) ? S.life : LIFE[Math.min(S.realm,14)]||80;
+  S.secl = (S.secl && typeof S.secl.until==="number") ? S.secl : {until:0};
+  S.path = (S.path===0||S.path===1)?S.path:-1;
+  S.refine = S.refine||{};
+  S.mLog = Array.isArray(S.mLog) ? S.mLog : [];
+  // v2/v3 旧档kills补账：按通关数粗估
+  if (!d.kills && d.v) S.kills = S.zprog.reduce((a,b)=>a+b,0);
+  normalizeState();
+  S.flow = (S.flow && typeof S.flow.until==="number") ? S.flow : {until:0, mult:1};
+  const away = Math.min(8*3600, (Date.now()-(S.last||Date.now()))/1000);
+  if (away>120){
+    const g = Math.round(rps()*away);
+    S.qi += g; S.total += g;
+    setTimeout(()=>toast(`闭关 ${mmss(away)}，吐纳吸纳 ${fmt(g)} 灵气`), 600);
+  }
+  S.last = Date.now();
+  dirty = true;
+  if (!S.talents) setTimeout(talOpen, 300);
+}
+
+// ═════════ 吐纳 ═════════
+function fly(txt, x, y){
+  const el = document.createElement("div");
+  el.textContent = txt;
+  el.style.cssText = `position:fixed;left:${x}px;top:${y}px;color:var(--gold);font-size:15px;pointer-events:none;z-index:98;transition:all .9s;`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>{ el.style.transform="translateY(-46px)"; el.style.opacity="0"; });
+  setTimeout(()=>el.remove(), 950);
+}
+function tap(ev){
+  const g = clickPow();
+  S.qi += g; S.total += g;
+  if (ev && ev.clientX) fly("+"+fmt(g), ev.clientX, ev.clientY);
+  dirty = true; render();
+}
+
+// ═════════ 低调模式 ═════════
+let modeSnapshot = null;
+const DEFAULT_NOTE = `非工空调智慧调控项目 · 工作笔记
+
+■ 11-07
+- 附件2-6 拓扑图线宽统一 1.5px，折叠标记已复核
+- EMS 三层术语口径（调度侧 / 用户侧 / 储能）发中恒宁瑞核对
+- 试打印通过，盖章页留白 OK
+
+■ 11-08
+- 溧水远传水表：≥9 次同值判合格规则写入验收说明
+- 千宝通演示软件用户码仍提示未注册，待联系厂家
+
+■ 待办
+1. 与物业确认 6 栋抄表时间窗
+2. 打印机 RICOH IM 2500 驱动备用盘（勿走 Windows Update）
+3. 验收附件页码对账表`;
+function toggleMode(){
+  document.body.classList.toggle("moding");
+  const on = document.body.classList.contains("moding");
+  if (on){
+    if (!modeSnapshot) modeSnapshot = {t:$("title").textContent, m:$("mood").textContent};
+    $("title").textContent = DISGUISE_TITLE;
+    $("mood").textContent = "最后编辑于 "+new Date().toLocaleDateString("zh-CN");
+    document.title = DISGUISE_TITLE;
+    const note = $("fakeNote");
+    if (!note.value) note.value = localStorage.getItem("xx_idle_note") || DEFAULT_NOTE;
+    updateMeta();
+    note.focus();
+  } else {
+    $("title").textContent = modeSnapshot.t;
+    $("mood").textContent = modeSnapshot.m;
+    document.title = modeSnapshot.t;
+  }
+}
+function updateMeta(){
+  const v = $("fakeNote").value;
+  { // GM 行彩蛋：笔记中出现连续 wasdwasdwasd 才显示
+    const row = $("gmRow");
+    if (row) row.classList.toggle("gmOn", v.includes("wasdwasdwasd"));
+  }
+  const n = v.replace(/\s/g,"").length;
+  const ts = localStorage.getItem("xx_idle_note_ts") || "10-28 09:14";
+  $("docMeta").textContent = `创建于 2026-10-28 09:14 · 最后编辑于 ${ts} · 共 ${n} 字`;
+}
+$("fakeNote").addEventListener("input", ()=>{
+  localStorage.setItem("xx_idle_note", $("fakeNote").value);
+  const d = new Date();
+  const pad = x => String(x).padStart(2,"0");
+  localStorage.setItem("xx_idle_note_ts", `${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`);
+  updateMeta();
+});
+$("saveNoteBtn").onclick = ()=>{
+  const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const paras = $("fakeNote").value.split("\n").map(line=>{
+    const t = esc(line);
+    if (!t) return `<p style="margin:0">&nbsp;</p>`;
+    if (line.startsWith("■")) return `<p style="margin:14pt 0 6pt;font-weight:bold">${t}</p>`;
+    return `<p style="margin:0 0 4pt">${t}</p>`;
+  }).join("");
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">`+
+    `<head><meta charset="utf-8"><title>工作笔记</title></head>`+
+    `<body style="font-family:微软雅黑;font-size:12pt;line-height:1.8">${paras}</body></html>`;
+  const d = new Date();
+  const pad = x => String(x).padStart(2,"0");
+  const name = `工作笔记_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.doc`;
+  const blob = new Blob(["\ufeff", html], {type:"application/msword"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+};
+$("title").addEventListener("dblclick", toggleMode);
+
+// ═════════ 初始化 ═════════
+TABS.forEach(([t,nm])=>{
+  const b = document.createElement("button");
+  b.dataset.t = t; b.textContent = nm;
+  if (t===tab) b.classList.add("on");
+  b.onclick = ()=>switchTab(t);
+  $("tabbar").appendChild(b);
+});
+document.querySelectorAll(".mulbar button[data-mul]").forEach(b=>{
+  const v = b.dataset.mul==="max" ? "max" : +b.dataset.mul;
+  if (v === S.mul) b.classList.add("on");
+  b.onclick = ()=>{ S.mul = v;
+    document.querySelectorAll(".mulbar button[data-mul]").forEach(x=>{
+      const xv = x.dataset.mul==="max" ? "max" : +x.dataset.mul;
+      x.classList.toggle("on", xv===S.mul);
+    });
+    dirty=true; render(); save(); };
+});
+setInterval(()=>{
+  const g = rps(); S.qi += g; S.total += g;
+  const gw = gfXw(); if (gw > 0) S.xw = Math.min(gfNeed(), S.xw + gw);
+  settleMissions();
+  checkAchv();
+  if (S.flow && Date.now() < S.flow.until){
+    S.plots.forEach(p=>{ if (p) p.at -= (S.flow.mult-1)*1000; });
+  }
+  if (S.breed && Date.now()-S.breed.at >= (S.breed.need||180000)){
+    const sp = S.breed.sp; S.breed = null;
+    if (S.beasts.length<penCap()){ S.beasts.push({sp, at:Date.now()}); toast(`${sp} 诞下幼崽！`); }
+    else toast("兽栏已满，幼崽未能降生");
+  }
+  if (S.consign && auctSlot() > S.consign.slot){
+    S.stones += S.consign.stones;
+    toast(`寄售到账：${fmt(S.consign.stones)} 灵石`);
+    S.consign = null;
+  }
+  dirty = true;
+  render();
+}, 1000);
+setInterval(save, 10000);
+window.addEventListener("beforeunload", save);
+$("tapBtn").onclick = tap;
+$("gmBtn").onclick = ()=>{
+  let v = ($("gmInput").value||"").trim();
+  if (!v){ toast("先输入物品名"); return; }
+  let n = 1, m = v.match(/^(.+?)\s*[×x*]\s*(\d+)$/);
+  if (m){ v = m[1].trim(); n = Math.max(1, Math.min(9999, +m[2])); }
+  const pillMatch = /^(?:[\u4e00-\u9fa5]{1,3}·)?(力道丹|铁骨丹|疾风丹|血气丹|聚气丹)$/.test(v);
+  if (v === "轮回果"){ S.inv["轮回果"]=(S.inv["轮回果"]||0)+n; }
+  else if (pillMatch){ S.inv[v]=(S.inv[v]||0)+n; }
+  else if (HERBS.some(h=>h.nm===v)){ S.inv[v]=(S.inv[v]||0)+n; }
+  else if (MATS[v] !== undefined){ S.inv[v]=(S.inv[v]||0)+n; }
+  else if (v.endsWith("种子") && HERBS.some(h=>h.nm===v.replace(/种子$/,""))){ S.seeds[v.replace(/种子$/,"")]=(S.seeds[v.replace(/种子$/,"")]||0)+n; }
+  else if (BEASTS.some(x=>x.sp===v)){ if (S.beasts.length>=penCap()){ toast("兽栏已满"); return; } S.beasts.push({sp:v, at:Date.now()}); }
+  else { toast("未识别的物品名：可输入灵草/材料/种子/妖兽/轮回果"); return; }
+  toast(`已添加 ${v}×${n} 至当前存档`);
+  $("gmInput").value = "";
+  dirty=true; render(); save();
+};
+$("wipeBtn").onclick = ()=>{
+  if (!confirm("转世重修：散尽此世一切（灵石/境界/修为/装备/丹药/妖兽/秘境/道途），只携仙缘神通进入下一世？")) return;
+  const keep = { xy:S.xy||0, xyUp:Object.assign({body:0,rps:0,trib:0,stone:0}, S.xyUp||{}), achv:S.achv||{}, asc:(S.ascend||0)+1, fruit:S.inv["轮回果"]||0 };
+  S.realm=0; S.stage=0; S.xw=0; S.qi=0; S.total=0; S.mul=1; S.partnerSp=null; S.breed=null;
+  S.owned=SHOPS.map(()=>0); S.clicks=CLICKS.map(()=>0);
+  S.inv = keep.fruit>0 ? {"轮回果":keep.fruit} : {};
+  S.seeds={}; S.harvestN={}; S.plots=[null,null]; S.beasts=[];
+  S.eq={w:null,a:null,t:null}; S.pillU={atk:0,def:0,spd:0,hp:0}; S.pillCount={atk:0,def:0,spd:0,hp:0,rps:0}; S.rpsPct=0;
+  S.stones=2000*(keep.xyUp.stone||0); S.crystals=0; S.essence=0;
+  S.life=80; S.zprog=ZONES.map(()=>0); S.missions=[]; S.kills=0; S.tribWins=0; S.tribFails=0;
+  S.gfOwned=GF.map(()=>false); S.gfMain=-1;
+  S.talents=null; S.tRolls=0; S.troll=null; S.talSel=[]; S.talLock=[];
+  S.path=-1; S.secl={until:0}; S.flow={until:0,mult:1}; S.auct=null; S.consign=null; S.refine={};
+  S.sign={d:"",n:0}; S.alv=0;
+  S.xy=keep.xy; S.xyUp=keep.xyUp; S.achv=keep.achv; S.ascend=keep.asc;
+  tribLog.unshift(`【转世重修】第${keep.asc}世开启，仙缘 ${keep.xy} 点神通俱在`);
+  dirty=true; save(); render();
+  toast(`转世重修！进入第${keep.asc}世 —— 仙缘神通俱在，一切从头再来`);
+};
+
+load();
+render();
+$("savedAt").textContent = "进度已载入";
+
+
+</script>
+</body>
+</html>
